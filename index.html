@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NBA Team League 2026-27</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏀</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;400;500;600;700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Libre Franklin','Helvetica Neue',sans-serif;background-color:#C48A4A;background-image:repeating-linear-gradient(0deg,rgba(60,30,10,.035) 0,rgba(60,30,10,.035) 1px,transparent 1px,transparent 5px),repeating-linear-gradient(90deg,#C48A4A 0,#C48A4A 78px,#7a4e24 78px,#7a4e24 80px,#CF9959 80px,#CF9959 158px,#7a4e24 158px,#7a4e24 160px,#BE8343 160px,#BE8343 238px,#7a4e24 238px,#7a4e24 240px,#D3A062 240px,#D3A062 318px,#7a4e24 318px,#7a4e24 320px);background-attachment:fixed}
+input:focus{outline:2px solid #E8903A}
+button{cursor:pointer}
+button:active{transform:scale(0.97)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes headerShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes goldGlow{0%,100%{box-shadow:0 0 8px rgba(232,144,58,0.3)}50%{box-shadow:0 0 20px rgba(232,144,58,0.5)}}
+@keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.mu{color:#2E7D32;font-size:10px;font-weight:800}
+.md{color:#C62828;font-size:10px;font-weight:800}
+.ms{color:#6B7280;font-size:10px}
+.glass{background:rgba(255,248,235,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.4)}
+.gold-row{animation:goldGlow 3s ease-in-out infinite;border-radius:8px}
+.ticker-wrap{overflow:hidden;width:100%;background:#1f1008;padding:6px 0}
+.ticker-track{display:flex;gap:32px;white-space:nowrap;animation:tickerScroll 60s linear infinite;width:max-content}
+@media(max-width:600px){
+h1{font-size:22px!important}
+.hdr{padding:16px 16px 12px!important}
+.hdr-row{flex-direction:column!important;align-items:flex-start!important;gap:8px}
+.tabs-row button{padding:8px 10px!important;font-size:9px!important}
+.prize-row{flex-direction:column!important}
+.st-table th,.st-table td{padding:8px 4px!important;font-size:10px!important}
+.roster-grid{grid-template-columns:1fr!important}
+.draft-mgr-grid{grid-template-columns:repeat(2,1fr)!important}
+.draft-layout{flex-direction:column!important}
+.draft-sidebar{width:100%!important;min-width:0!important;position:relative!important;top:0!important}
+.division-grid{grid-template-columns:1fr!important}
+.ticker-track{animation-duration:30s}
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<!-- v4.0 wins-focused clean rebuild -->
+<script>
+firebase.initializeApp({apiKey:"AIzaSyC8UvEYET3uXzDNHBuOz_PoQj-pLUFEHDs",authDomain:"mlbtl26.firebaseapp.com",databaseURL:"https://mlbtl26-default-rtdb.firebaseio.com",projectId:"mlbtl26",storageBucket:"mlbtl26.firebasestorage.app",messagingSenderId:"609988607987",appId:"1:609988607987:web:7aaf6f783aad1392995c86"});
+var DB=firebase.database(),GAME=DB.ref("nbatl26/game");
+var ALL_TEAMS=["76ers","Blazers","Bucks","Bulls","Cavaliers","Celtics","Clippers","Grizzlies","Hawks","Heat","Hornets","Jazz","Kings","Knicks","Lakers","Magic","Mavericks","Nets","Nuggets","Pacers","Pelicans","Pistons","Raptors","Rockets","Spurs","Suns","Thunder","Timberwolves","Warriors","Wizards"];
+var MNAMES=["Swaggy","Gallup","Gainzy","Rippe"];
+var MGR_COLORS={"Swaggy":"#DC2626","Gallup":"#2563EB","Gainzy":"#059669","Rippe":"#7C3AED"};
+var MGR_EMOJI={"Swaggy":"😎","Gallup":"💰","Gainzy":"📈","Rippe":"🔥"};
+var TEAM_COLORS={"Hawks":"#E03A3E","Celtics":"#007A33","Nets":"#444444","Hornets":"#1D1160","Bulls":"#CE1141","Cavaliers":"#860038","Mavericks":"#00538C","Nuggets":"#0E2240","Pistons":"#C8102E","Warriors":"#1D428A","Rockets":"#CE1141","Pacers":"#002D62","Clippers":"#C8102E","Lakers":"#552583","Grizzlies":"#5D76A9","Heat":"#98002E","Bucks":"#00471B","Timberwolves":"#236192","Pelicans":"#0C2340","Knicks":"#F58426","Thunder":"#007AC1","Magic":"#0077C0","76ers":"#006BB6","Suns":"#E56020","Blazers":"#E03A3E","Kings":"#5A2D81","Spurs":"#8A8D8F","Raptors":"#CE1141","Jazz":"#002B5C","Wizards":"#002B5C"};
+var LOGOS={"Hawks":"https://a.espncdn.com/i/teamlogos/nba/500/atl.png","Celtics":"https://a.espncdn.com/i/teamlogos/nba/500/bos.png","Nets":"https://a.espncdn.com/i/teamlogos/nba/500/bkn.png","Hornets":"https://a.espncdn.com/i/teamlogos/nba/500/cha.png","Bulls":"https://a.espncdn.com/i/teamlogos/nba/500/chi.png","Cavaliers":"https://a.espncdn.com/i/teamlogos/nba/500/cle.png","Mavericks":"https://a.espncdn.com/i/teamlogos/nba/500/dal.png","Nuggets":"https://a.espncdn.com/i/teamlogos/nba/500/den.png","Pistons":"https://a.espncdn.com/i/teamlogos/nba/500/det.png","Warriors":"https://a.espncdn.com/i/teamlogos/nba/500/gs.png","Rockets":"https://a.espncdn.com/i/teamlogos/nba/500/hou.png","Pacers":"https://a.espncdn.com/i/teamlogos/nba/500/ind.png","Clippers":"https://a.espncdn.com/i/teamlogos/nba/500/lac.png","Lakers":"https://a.espncdn.com/i/teamlogos/nba/500/lal.png","Grizzlies":"https://a.espncdn.com/i/teamlogos/nba/500/mem.png","Heat":"https://a.espncdn.com/i/teamlogos/nba/500/mia.png","Bucks":"https://a.espncdn.com/i/teamlogos/nba/500/mil.png","Timberwolves":"https://a.espncdn.com/i/teamlogos/nba/500/min.png","Pelicans":"https://a.espncdn.com/i/teamlogos/nba/500/no.png","Knicks":"https://a.espncdn.com/i/teamlogos/nba/500/ny.png","Thunder":"https://a.espncdn.com/i/teamlogos/nba/500/okc.png","Magic":"https://a.espncdn.com/i/teamlogos/nba/500/orl.png","76ers":"https://a.espncdn.com/i/teamlogos/nba/500/phi.png","Suns":"https://a.espncdn.com/i/teamlogos/nba/500/phx.png","Blazers":"https://a.espncdn.com/i/teamlogos/nba/500/por.png","Kings":"https://a.espncdn.com/i/teamlogos/nba/500/sac.png","Spurs":"https://a.espncdn.com/i/teamlogos/nba/500/sa.png","Raptors":"https://a.espncdn.com/i/teamlogos/nba/500/tor.png","Jazz":"https://a.espncdn.com/i/teamlogos/nba/500/utah.png","Wizards":"https://a.espncdn.com/i/teamlogos/nba/500/wsh.png"};
+function toArr(v){if(!v)return[];if(Array.isArray(v))return v;return Object.values(v)}
+function cPicks(v){if(!v)return[[],[],[],[]];var a=Array.isArray(v)?v:Object.keys(v).sort().map(function(k){return v[k]});while(a.length<4)a.push([]);return a.map(function(x){return toArr(x).filter(function(t){return t!=="_"})})}
+function cMgrs(v){if(!v)return MNAMES.map(function(n){return{name:n,teams:[],wsPick:""}});var a=Array.isArray(v)?v:Object.values(v);return a.map(function(m){return{name:m.name||"",teams:toArr(m.teams).filter(function(x){return x!=="_"}),wsPick:m.wsPick||""}})}
+function cRecs(v){var o={};ALL_TEAMS.forEach(function(t){o[t]=(v&&v[t])?{w:v[t].w||0,l:v[t].l||0}:{w:0,l:0}});return o}
+function cOrd(v){if(!v||v==="none")return null;if(Array.isArray(v))return v;return Object.values(v)}
+function cDM(v){if(!v)return[].concat(MNAMES);return Array.isArray(v)?v:Object.values(v)}
+function norm(d){if(!d)d={};return{managers:cMgrs(d.managers),records:cRecs(d.records),draftMode:!!d.draftMode,draftRound:d.draftRound||0,draftPick:d.draftPick||0,draftManagers:cDM(d.draftManagers),draftPicks:cPicks(d.draftPicks),draftOrder:cOrd(d.draftOrder),draftLocked:!!d.draftLocked,namesLocked:!!d.namesLocked,prevRankings:d.prevRankings||null,prevRankingsDate:d.prevRankingsDate||""}}
+function defData(){var r={};ALL_TEAMS.forEach(function(t){r[t]={w:0,l:0}});var S={"managers":[{"name":"Swaggy","teams":["Thunder","Nuggets","Heat","Pacers","Magic","Wizards","Pelicans"],"wsPick":""},{"name":"Gallup","teams":["Spurs","Timberwolves","Rockets","Warriors","Clippers","Suns","Grizzlies"],"wsPick":""},{"name":"Gainzy","teams":["Knicks","Cavaliers","Pistons","Hawks","Hornets","Mavericks","Bucks"],"wsPick":""},{"name":"Rippe","teams":["Celtics","76ers","Raptors","Lakers","Blazers","Jazz","Bulls"],"wsPick":""}],"draftMode":false,"draftRound":7,"draftPick":0,"draftManagers":["Swaggy","Gallup","Gainzy","Rippe"],"draftPicks":[["Thunder","Nuggets","Heat","Pacers","Magic","Wizards","Pelicans"],["Spurs","Timberwolves","Rockets","Warriors","Clippers","Suns","Grizzlies"],["Knicks","Cavaliers","Pistons","Hawks","Hornets","Mavericks","Bucks"],["Celtics","76ers","Raptors","Lakers","Blazers","Jazz","Bulls"]],"draftOrder":[0,1,2,3],"draftLocked":true,"namesLocked":true,"prevRankings":null,"prevRankingsDate":""};S.records=r;return S}
+// Firebase keys can't contain . # $ / [ ] - sanitize manager names for use as keys
+function fbKey(name){return(name||"").replace(/[.#$/\[\]]/g,"_")}
+function fbKeyReverse(key,names){return names.find(function(n){return fbKey(n)===key})||key}
+
+var NBA_NAME_MAP={"Atlanta Hawks":"Hawks","Boston Celtics":"Celtics","Brooklyn Nets":"Nets","Charlotte Hornets":"Hornets","Chicago Bulls":"Bulls","Cleveland Cavaliers":"Cavaliers","Dallas Mavericks":"Mavericks","Denver Nuggets":"Nuggets","Detroit Pistons":"Pistons","Golden State Warriors":"Warriors","Houston Rockets":"Rockets","Indiana Pacers":"Pacers","LA Clippers":"Clippers","Los Angeles Clippers":"Clippers","Los Angeles Lakers":"Lakers","Memphis Grizzlies":"Grizzlies","Miami Heat":"Heat","Milwaukee Bucks":"Bucks","Minnesota Timberwolves":"Timberwolves","New Orleans Pelicans":"Pelicans","New York Knicks":"Knicks","Oklahoma City Thunder":"Thunder","Orlando Magic":"Magic","Philadelphia 76ers":"76ers","Phoenix Suns":"Suns","Portland Trail Blazers":"Blazers","Trail Blazers":"Blazers","Sacramento Kings":"Kings","San Antonio Spurs":"Spurs","Toronto Raptors":"Raptors","Utah Jazz":"Jazz","Washington Wizards":"Wizards"};
+function mapTeam(t){
+  if(!t)return"";
+  var c=[t.shortDisplayName,t.name,t.displayName];
+  for(var i=0;i<c.length;i++){var n=c[i];if(!n)continue;if(NBA_NAME_MAP[n]&&ALL_TEAMS.indexOf(NBA_NAME_MAP[n])>-1)return NBA_NAME_MAP[n];if(ALL_TEAMS.indexOf(n)>-1)return n}
+  return"";
+}
+function fetchNBAStandings(){
+  // ESPN API - supports CORS, no API key needed
+  return fetch("https://site.api.espn.com/apis/v2/sports/basketball/nba/standings")
+    .then(function(r){if(!r.ok)throw new Error("ESPN fail");return r.json()})
+    .then(function(data){
+      var records={};
+      ALL_TEAMS.forEach(function(t){records[t]={w:0,l:0}});
+      (data&&data.children||[]).forEach(function(conf){
+        (conf.standings&&conf.standings.entries||[]).forEach(function(entry){
+          var mapped=mapTeam(entry.team);
+          if(mapped){
+            var w=0,l=0;
+            (entry.stats||[]).forEach(function(s){
+              if(s.name==="wins")w=parseInt(s.value)||0;
+              if(s.name==="losses")l=parseInt(s.value)||0;
+            });
+            records[mapped]={w:w,l:l};
+          }
+        });
+      });
+      return records;
+    });
+}
+</script>
+<script type="text/babel">
+function App(){
+  const[state,setState]=React.useState(null);
+  const[tab,setTabState]=React.useState(function(){var h=window.location.hash.replace("#","");if(h==="records"||h==="signup")h="standings";return["standings","rosters","draft","rules"].includes(h)?h:"standings"});
+  function setTab(t){setTabState(t);window.location.hash=t}
+  const[editRec,setEditRec]=React.useState(false);
+  const[recPwd,setRecPwd]=React.useState("");
+  const[shareCaption,setShareCaption]=React.useState(null);
+  const recUnlocked=recPwd==="rippe26";
+  const[anim,setAnim]=React.useState(false);
+  const[shuffled,setShuffled]=React.useState(null);
+  const[live,setLive]=React.useState(false);
+  const[adm,setAdm]=React.useState(false);
+  const[pwd,setPwd]=React.useState("");
+  const[chatMsgs,setChatMsgs]=React.useState([]);
+  const[chatInput,setChatInput]=React.useState("");
+  const[chatName,setChatName]=React.useState("");
+  const[lastSync,setLastSync]=React.useState("");
+  const[syncing,setSyncing]=React.useState(false);
+  const[ticker,setTicker]=React.useState([]);
+  const[signName,setSignName]=React.useState("");
+  const[signEmail,setSignEmail]=React.useState("");
+  const[signLeagues,setSignLeagues]=React.useState([]);
+  const[signSent,setSignSent]=React.useState(false);
+  const chatRef=React.useRef(null);
+  const skip=React.useRef(false);
+  const prevPC=React.useRef(0);
+  const weekSaved=React.useRef(false);
+  const standingsRef=React.useRef(null);
+  const draftResultsRef=React.useRef(null);
+
+  function shareStandings(){
+    if(!standingsRef.current)return;
+    html2canvas(standingsRef.current,{backgroundColor:"#FFF6E8",scale:2}).then(function(canvas){
+      canvas.toBlob(function(blob){
+        if(navigator.share&&navigator.canShare&&navigator.canShare({files:[new File([blob],"nba-tl-standings.png",{type:"image/png"})]})){
+          navigator.share({files:[new File([blob],"nba-tl-standings.png",{type:"image/png"})],title:"NBA Team League 2026-27 Standings"})
+        }else{
+          var a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="nba-tl-standings.png";a.click();URL.revokeObjectURL(a.href)
+        }
+      },"image/png")
+    })
+  }
+
+  function shareDraftResults(){
+    if(!draftResultsRef.current)return;
+    if(shareCaption===null)setShareCaption("");
+    setTimeout(function(){
+      html2canvas(draftResultsRef.current,{backgroundColor:"#FFF6E8",scale:2}).then(function(canvas){
+        canvas.toBlob(function(blob){
+          if(navigator.share&&navigator.canShare&&navigator.canShare({files:[new File([blob],"nba-tl-26-draft-recap.png",{type:"image/png"})]})){
+            navigator.share({files:[new File([blob],"nba-tl-26-draft-recap.png",{type:"image/png"})],title:"NBA TL 26 Draft Recap"})
+          }else{
+            var a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="nba-tl-26-draft-recap.png";a.click()
+          }
+        },"image/png")
+      })
+    },100)
+  }
+  const isAdm=pwd==="rippe26";
+  const N="#3A2112",G="#E8903A",LG="#FFF1DC",LN="#F3E4CC",GR="#2E7D32",RD="#C62828",GY="#6B5B4B",MG="#D9CBB8";
+
+  React.useEffect(function(){
+    GAME.on("value",function(snap){
+      if(skip.current){skip.current=false;return}
+      var d=snap.val();
+      if(d){
+        try{
+          var ns=norm(d);
+          setState(ns);setLive(true);
+          if(ns.draftOrder)setShuffled(ns.draftOrder);
+          prevPC.current=ns.draftPicks.reduce(function(a,b){return a+b.length},0);
+        }catch(e){console.error("norm error:",e);setState(norm(defData()));setLive(true)}
+      }else{GAME.set(defData());setState(norm(defData()));setLive(true)}
+    });
+    return function(){GAME.off()}
+  },[]);
+
+  // Chat listener
+  React.useEffect(function(){
+    var chatDB=DB.ref("nbatl26/chat");
+    chatDB.orderByChild("ts").limitToLast(50).on("value",function(snap){
+      var d=snap.val();
+      if(d){var msgs=Object.keys(d).map(function(k){return d[k]}).sort(function(a,b){return a.ts-b.ts});setChatMsgs(msgs)}
+      else{setChatMsgs([])}
+    });
+    return function(){chatDB.off()}
+  },[]);
+
+  // Auto weekly snapshot - runs once per Monday
+  React.useEffect(function(){
+    if(!state||!state.draftLocked||weekSaved.current)return;
+    var now=new Date();if(now.getDay()!==1)return;
+    var ls=state.prevRankingsDate||"";var td=now.toISOString().slice(0,10);
+    if(ls===td)return;
+    var mgList=cMgrs(state.managers);var recs=cRecs(state.records);
+    var ranked2=[].concat(mgList).map(function(m){var tw=0;(m.teams||[]).forEach(function(t){tw+=(recs[t]||{w:0}).w});return{name:m.name,tw:tw}}).sort(function(a,b){return b.tw-a.tw});
+    if(ranked2[0]&&ranked2[0].tw>0){weekSaved.current=true;var sn={};ranked2.forEach(function(m,i){sn[fbKey(m.name)]=i+1});GAME.update({prevRankings:sn,prevRankingsDate:td})}
+  },[state&&state.draftLocked]);
+
+  // Auto-sync NBA standings every 15 min
+  var syncRef=React.useRef(false);
+  React.useEffect(function(){
+    function doSync(){
+      var seasonStart=new Date("2026-10-20T00:00:00-04:00");
+      if(new Date()<seasonStart)return;
+      setSyncing(true);
+      console.log("NBA sync starting...");
+      fetchNBAStandings().then(function(records){
+        var hasData=ALL_TEAMS.some(function(t){return records[t]&&(records[t].w>0||records[t].l>0)});
+        console.log("NBA sync result - hasData:",hasData,records);
+        if(hasData){
+          GAME.child("records").set(records);
+          setLastSync(new Date().toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}));
+        }
+        setSyncing(false);
+      }).catch(function(e){console.log("NBA sync error:",e);setSyncing(false)});
+    }
+    if(!syncRef.current){syncRef.current=true;doSync()}
+    var id=setInterval(doSync,15*60*1000); // every 15 min
+    return function(){clearInterval(id)}
+  },[]);
+
+  function manualSync(){
+    setSyncing(true);
+    fetchNBAStandings().then(function(records){
+      var hasData=ALL_TEAMS.some(function(t){return records[t]&&(records[t].w>0||records[t].l>0)});
+      if(hasData){
+        GAME.child("records").set(records);
+        setLastSync(new Date().toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}));
+      }
+      setSyncing(false);
+    }).catch(function(){setSyncing(false)});
+  }
+
+  // Fetch today's scores for ticker
+  React.useEffect(function(){
+    function fetchScores(){
+      var dd=new Date();var today=dd.getFullYear()+String(dd.getMonth()+1).padStart(2,"0")+String(dd.getDate()).padStart(2,"0");
+      fetch("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates="+today)
+        .then(function(r){return r.json()})
+        .then(function(data){
+          if(data&&data.events){
+            var scores=data.events.map(function(ev){
+              var c=ev.competitions&&ev.competitions[0];
+              if(!c)return null;
+              var away=c.competitors.find(function(t){return t.homeAway==="away"});
+              var home=c.competitors.find(function(t){return t.homeAway==="home"});
+              var status=ev.status&&ev.status.type?ev.status.type.shortDetail:"";
+              return{away:away?away.team.shortDisplayName:"",awayScore:away?away.score:"",home:home?home.team.shortDisplayName:"",homeScore:home?home.score:"",status:status,live:!!(ev.status&&ev.status.type&&ev.status.type.state==="in")}
+            }).filter(Boolean);
+            setTicker(scores);
+          }
+        }).catch(function(){});
+    }
+    fetchScores();
+    var id=setInterval(fetchScores,5*60*1000);
+    return function(){clearInterval(id)}
+  },[]);
+
+  function push(up){
+    var safe={};Object.keys(up).forEach(function(k){safe[k]=up[k]});
+    if(safe.draftPicks)safe.draftPicks=safe.draftPicks.map(function(a){return a.length===0?["_"]:a});
+    if(safe.managers)safe.managers=safe.managers.map(function(m){return{name:m.name,teams:m.teams.length===0?["_"]:m.teams,wsPick:m.wsPick||""}});
+    if(safe.draftOrder===null)safe.draftOrder="none";
+    skip.current=true;
+    var mg={};if(state)Object.keys(state).forEach(function(k){mg[k]=state[k]});Object.keys(up).forEach(function(k){mg[k]=up[k]});
+    setState(norm(mg));GAME.update(safe)
+  }
+
+  if(!state)return <div style={{display:"flex",justifyContent:"center",alignItems:"center",height:"100vh",fontSize:24,color:N}}>Loading...</div>;
+
+  var mg=state.managers,rc=state.records,dm=state.draftMode,dr=state.draftRound,dp=state.draftPick,dmg=state.draftManagers,dpk=state.draftPicks,dor=state.draftOrder,dlk=state.draftLocked,nlk=state.namesLocked,prk=state.prevRankings;
+  var base=dor||[0,1,2,3];
+  var snk=[0,1,2,3,4,5,6].map(function(i){return i%2===0?[].concat(base):[].concat(base).reverse()});
+
+  function stats(m){var tw=0,tl=0,bt="",bw=-1;(m.teams||[]).forEach(function(t){var r=rc[t]||{w:0,l:0};tw+=r.w;tl+=r.l;if(r.w>bw){bw=r.w;bt=t}});return{tw:tw,tl:tl,pct:(tw+tl)>0?tw/(tw+tl):0,bt:bt,bw:bw,avg:(m.teams||[]).length>0?tw/(m.teams||[]).length:0}}
+  var ranked=[].concat(mg).map(function(m){return Object.assign({},m,{s:stats(m)})}).sort(function(a,b){return b.s.tw-a.s.tw||b.s.bw-a.s.bw});
+  var liveMgrs=dmg.map(function(name,i){return{name:name||MNAMES[i]||"",teams:dpk[i]||[],wsPick:""}});
+  var liveRanked=[].concat(liveMgrs).map(function(m){return Object.assign({},m,{s:stats(m)})}).sort(function(a,b){return b.s.tw-a.s.tw||b.s.bw-a.s.bw});
+  var dR=dm||(dor&&!dlk)?liveRanked:ranked;
+  var dM=dm||(dor&&!dlk)?liveMgrs:mg;
+  var top=dR[0]?dR[0].s.tw:0;
+  var taken=dpk.reduce(function(a,b){return a.concat(b)},[]);
+  // When draft is locked, also include teams from managers (dpk may be incomplete in Firebase)
+  if(dlk){mg.forEach(function(m){(m.teams||[]).forEach(function(t){if(t&&!taken.includes(t))taken.push(t)})})}
+  var avail=ALL_TEAMS.filter(function(t){return!taken.includes(t)});
+  var cur=dr<7?snk[dr][dp]:-1;
+  var named=dmg.every(function(n){return(n||"").trim()!==""});
+  var pad=function(v){return String(v).padStart(2,"0")};
+
+  function getMv(name,rank){if(!prk)return null;var p=prk[fbKey(name)];if(p===undefined||p===null)return null;if(rank<p)return p-rank;if(rank>p)return-(rank-p);return 0}
+
+  // Badges
+  function getBadges(){
+    var bg={};dR.forEach(function(m){bg[m.name]=[]});
+    if(!dlk&&!dor)return bg;
+    var best={w:-1,m:"",t:""};var worst={w:9999,m:"",t:""};
+    dR.forEach(function(m){(m.teams||[]).forEach(function(t){var r=rc[t]||{w:0,l:0};if(r.w>best.w){best={w:r.w,m:m.name,t:t}}if(r.w+r.l>0&&r.w<worst.w){worst={w:r.w,m:m.name,t:t}}})});
+    if(best.w>0&&best.m){bg[best.m].push("🎯 Sharpshooter ("+best.t+" "+best.w+"W)");bg[best.m].push("💎 Diamond Pick")}
+    if(worst.w<9999&&worst.m)bg[worst.m].push("💩 Stinker ("+worst.t+" "+worst.w+"W)");
+    dR.forEach(function(m){if(m.s.tw>=300)bg[m.name].push("🏔️ 300 Club");else if(m.s.tw>=250)bg[m.name].push("🏔️ 250 Club");else if(m.s.tw>=200)bg[m.name].push("🏔️ 200 Club");else if(m.s.tw>=150)bg[m.name].push("🏔️ 150 Club");else if(m.s.tw>=100)bg[m.name].push("💯 Century Club")});
+    if(dR.length>0&&dR[0].s.tw>0)bg[dR[0].name].push("🔥 Hot Streak");
+    if(dR.length>1&&dR[dR.length-1].s.tw>0)bg[dR[dR.length-1].name].push("❄️ Cold Streak");
+    dR.forEach(function(m){if((m.teams||[]).length===7){var ok=(m.teams||[]).every(function(t){var r=rc[t]||{w:0,l:0};return(r.w+r.l)>0&&r.w>r.l});if(ok)bg[m.name].push("🏆 Clean Sweep")}});
+    return bg
+  }
+  var badges=getBadges();
+
+  function teamL(name,sz){return <span style={{display:"inline-flex",alignItems:"center",gap:5}}><img src={LOGOS[name]||""} alt="" style={{width:sz||18,height:sz||18,objectFit:"contain"}} onError={function(e){e.target.style.display="none"}}/>{name}{name==="Dodgers"?" \uD83C\uDFC6":""}</span>}
+
+  function doPick(team){
+    if(cur<0||dlk||taken.includes(team))return;
+    var np=dpk.map(function(a){return[].concat(a)});np[cur].push(team);
+    var nP=dp+1,nR=dr;if(nP>=4){nP=0;nR++}
+    var up={draftPicks:np,draftPick:nP,draftRound:nR,namesLocked:true};
+    if(nR>=7){up.managers=mg.map(function(m,i){return{name:dmg[i]||m.name,teams:np[i],wsPick:""}});up.draftLocked=true;up.draftMode=false}
+    push(up);
+  }
+  function startDraft(){if(dlk)return;push({draftRound:0,draftPick:0,draftPicks:[[],[],[],[]],draftManagers:mg.map(function(m,i){return m.name||MNAMES[i]||""}),namesLocked:false,draftOrder:null,draftMode:true,draftLocked:false});setShuffled(null);setAnim(false);setTab("draft")}
+  function doRandom(){
+    if(dor!==null||!named)return;setAnim(true);var ct=0;
+    var si=setInterval(function(){var t=[0,1,2,3];for(var i=3;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=t[i];t[i]=t[j];t[j]=tmp}setShuffled([].concat(t));ct++;
+      if(ct>=15){clearInterval(si);var f=[0,1,2,3];for(var i=3;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=f[i];f[i]=f[j];f[j]=tmp}setShuffled(f);push({draftOrder:f,namesLocked:true});setTimeout(function(){setAnim(false)},500)}
+    },120)
+  }
+  function undo(){if(!isAdm)return;var pP=dp-1,pR=dr;if(pP<0){pP=3;pR--}if(pR<0)return;var who=snk[pR][pP];var np=dpk.map(function(a){return[].concat(a)});if(!np[who]||np[who].length===0)return;np[who].pop();push({draftPicks:np,draftPick:pP,draftRound:pR})}
+  function saveWeek(){if(!isAdm)return;var sn={};dR.forEach(function(m,i){sn[fbKey(m.name)]=i+1});push({prevRankings:sn,prevRankingsDate:new Date().toISOString().slice(0,10)})}
+  function setDMgr(i,v){if(nlk)return;var nm=[].concat(dmg);nm[i]=v;push({draftManagers:nm})}
+  function setRc(t,f,v){var nr={};ALL_TEAMS.forEach(function(x){nr[x]={w:rc[x].w,l:rc[x].l}});nr[t][f]=parseInt(v)||0;push({records:nr})}
+
+  function sendChat(){
+    if(!chatInput.trim()||!chatName.trim())return;
+    DB.ref("nbatl26/chat").push({name:chatName.trim(),msg:chatInput.trim(),ts:Date.now()});
+    setChatInput("");
+    if(chatRef.current)setTimeout(function(){chatRef.current.scrollTop=chatRef.current.scrollHeight},100)
+  }
+
+  function submitSignup(){
+    if(!signName.trim()||!signEmail.trim())return;
+    DB.ref("nbatl26/signups").push({name:signName.trim(),email:signEmail.trim(),leagues:signLeagues,ts:Date.now()});
+    setSignSent(true);
+    // Also send via mailto
+    var body="New Team League Sign Up!%0A%0AName: "+encodeURIComponent(signName)+ "%0AEmail: "+encodeURIComponent(signEmail)+"%0AInterested in: "+encodeURIComponent(signLeagues.join(", "));
+    var link=document.createElement("a");link.href="mailto:mikebrippe@gmail.com?subject=Team%20League%20Sign%20Up%20-%20"+encodeURIComponent(signName)+"&body="+body;link.click();
+  }
+
+  function toggleLeague(lg){
+    if(signLeagues.includes(lg))setSignLeagues(signLeagues.filter(function(x){return x!==lg}));
+    else setSignLeagues([].concat(signLeagues,[lg]));
+  }
+
+  var tabs=[{id:"standings",l:"Standings"},{id:"rosters",l:"Rosters"},{id:"draft",l:"Draft Room"},{id:"rules",l:"Rules"}];
+
+  return (
+    <div style={{fontFamily:"'Libre Franklin',sans-serif",minHeight:"100vh"}}>
+      <div className="hdr" style={{background:"linear-gradient(270deg,#3A2112,#26140A,#3A2112,#53301A)",backgroundSize:"400% 400%",animation:"headerShift 12s ease infinite",padding:"16px 32px 12px",position:"relative",overflow:"hidden",borderBottom:"4px solid #E8903A"}}>
+        <svg aria-hidden="true" width="150" height="150" viewBox="0 0 100 100" style={{position:"absolute",right:12,top:-30,opacity:.18,pointerEvents:"none"}}><circle cx="50" cy="50" r="46" fill="#A0522D" stroke="#1a0c04" strokeWidth="2"/><path d="M50 4V96M4 50H96" stroke="#1a0c04" strokeWidth="2" fill="none"/><path d="M16 16C34 32 34 68 16 84M84 16C66 32 66 68 84 84" stroke="#1a0c04" strokeWidth="2" fill="none"/></svg>
+        <div className="hdr-row" style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end",position:"relative"}}>
+          <div>
+            <div style={{color:G,fontSize:11,fontWeight:700,letterSpacing:4,textTransform:"uppercase",marginBottom:4}}>The Official</div>
+            <h1 style={{color:"#fff",fontSize:32,fontWeight:900,margin:0,fontFamily:"'Oswald','Arial Narrow',sans-serif"}}>NBA Team League <span style={{color:G}}>2026-27</span></h1>
+          </div>
+          <div style={{color:G,fontSize:12,fontWeight:600,letterSpacing:1,textAlign:"right"}}>
+            DEFENDING CHAMP: GAINZY 👑
+            <div style={{fontSize:10,color:"#ffffff80",marginTop:2}}>Est. 2024{" "}<span style={{display:"inline-block",width:8,height:8,borderRadius:"50%",background:live?GR:RD,marginLeft:6,animation:"pulse 2s infinite"}}/><span style={{color:live?"#4CAF50":RD,fontSize:9,fontWeight:700,marginLeft:4}}>{live?"LIVE":""}</span></div>
+          </div>
+        </div>
+        <div style={{marginTop:10,background:GR+"20",borderRadius:6,padding:"8px 16px",display:"flex",justifyContent:"center",alignItems:"center",gap:16,border:"1px solid "+GR+"40",flexWrap:"wrap"}}>
+          <span style={{display:"inline-block",width:8,height:8,borderRadius:"50%",background:GR,animation:"pulse 1.5s infinite"}}/>
+          <div style={{fontSize:11,color:GR,fontWeight:800,letterSpacing:2}}>2026-27 SEASON IS LIVE</div>
+          {(function(){var seasonStart=new Date("2026-10-20T00:00:00-04:00");var now=new Date();var day=Math.min(174,Math.max(1,Math.floor((now-seasonStart)/864e5)+1));return <div style={{fontSize:10,color:GY}}>Day {day} of 174</div>})()}
+        </div>
+        <div className="tabs-row" style={{display:"flex",gap:0,marginTop:10,borderBottom:"2px solid "+G+"33"}}>
+          {tabs.map(function(t){return <button key={t.id} onClick={function(){setTab(t.id)}} style={{background:tab===t.id?G:"transparent",color:tab===t.id?N:"#ffffff99",border:"none",padding:"8px 20px",fontSize:11,fontWeight:700,letterSpacing:1.5,textTransform:"uppercase",borderRadius:"6px 6px 0 0",fontFamily:"'Libre Franklin',sans-serif"}}>{t.l}</button>})}
+        </div>
+      </div>
+
+      {/* LIVE SCORES TICKER */}
+      {ticker.length>0&&<div className="ticker-wrap">
+        <div className="ticker-track">
+          {[].concat(ticker,ticker).map(function(g,i){
+            var st=g.status||"";
+            var isLive=!!g.live;
+            return <span key={i} style={{fontSize:11,color:isLive?"#4CAF50":"#ffffff90",fontWeight:isLive?700:400}}>
+              {g.away||""} <span style={{fontWeight:700,color:"#fff"}}>{g.awayScore||"0"}</span>
+              {" - "}
+              <span style={{fontWeight:700,color:"#fff"}}>{g.homeScore||"0"}</span> {g.home||""}
+              <span style={{color:isLive?"#4CAF50":"#ffffff50",fontSize:9,marginLeft:6}}>{st}</span>
+            </span>
+          })}
+        </div>
+      </div>}
+
+      <div style={{maxWidth:1100,margin:"16px auto",padding:"16px",background:"rgba(255,246,232,0.93)",borderRadius:14,boxShadow:"0 8px 30px rgba(40,18,6,0.35)",border:"2px solid #7a4e24"}}>
+
+        {tab==="standings"&&<div>
+          <div className="prize-row" style={{display:"flex",gap:12,marginBottom:24,flexWrap:"wrap"}}>
+            {[["Reg Season","$150","$50 entry"],["NBA Cup","$75","$25 entry"],["NBA Finals","$75","$25 entry"]].map(function(x){return <div key={x[0]} className="glass" style={{flex:1,minWidth:180,borderRadius:10,padding:"16px 20px"}}><div style={{fontSize:11,color:GY,fontWeight:600,letterSpacing:1,textTransform:"uppercase"}}>{x[0]}</div><div style={{fontSize:28,fontWeight:900,color:N,fontFamily:"'Oswald','Arial Narrow',sans-serif",marginTop:4}}>{x[1]}</div><div style={{fontSize:11,color:GY,marginTop:2}}>{x[2]}</div></div>})}
+          </div>
+
+          {/* SEASON PROGRESS BAR */}
+          {(function(){
+            var seasonStart=new Date("2026-10-20T00:00:00-04:00");
+            var seasonEnd=new Date("2027-04-11T23:59:59-04:00");
+            var now=new Date();
+            var totalDays=Math.floor((seasonEnd-seasonStart)/864e5);
+            var elapsed=Math.floor((now-seasonStart)/864e5);
+            var pct=Math.max(0,Math.min(100,Math.round((elapsed/totalDays)*100)));
+            var gamesOf82=Math.round(pct*0.82);
+            var started=now>=seasonStart;
+            var ended=now>=seasonEnd;
+            return <div style={{marginBottom:24,background:"#fff",borderRadius:10,padding:"16px 20px",border:"1px solid #E5E5E5"}}>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
+                <div style={{fontSize:11,fontWeight:700,color:N,letterSpacing:1.5}}>SEASON PROGRESS</div>
+                <div style={{fontSize:11,color:GY}}>{ended?"SEASON COMPLETE":started?("Day "+Math.max(1,elapsed)+" of "+totalDays+" - ~"+gamesOf82+" of 82 games"):"STARTS OCT 20"}</div>
+              </div>
+              <div style={{background:"#E5E5E5",borderRadius:20,height:12,overflow:"hidden",position:"relative"}}>
+                <div style={{background:started?"linear-gradient(90deg,"+GR+","+G+")":"#E5E5E5",height:"100%",borderRadius:20,width:(started?Math.max(1,pct):0)+"%",transition:"width 0.5s ease"}}/>
+              </div>
+              <div style={{display:"flex",justifyContent:"space-between",marginTop:6}}>
+                <span style={{fontSize:9,color:GY}}>Oct 20</span>
+                <span style={{fontSize:10,fontWeight:700,color:started?GR:GY}}>{started?(ended?"100":pct)+"%":"0%"}</span>
+                <span style={{fontSize:9,color:GY}}>Apr 11</span>
+              </div>
+            </div>
+          })()}
+
+          <div style={{display:"flex",justifyContent:"flex-end",alignItems:"center",gap:10,marginBottom:8}}>
+            <span style={{fontSize:10,color:syncing?G:GY}}>{syncing?"Syncing NBA data...":lastSync?"Live NBA data - updated "+lastSync:"Live NBA data"}</span>
+            <button onClick={manualSync} disabled={syncing} style={{background:syncing?MG:N,color:syncing?"#999":"#fff",border:"none",borderRadius:6,padding:"5px 14px",fontSize:10,fontWeight:700,fontFamily:"'Libre Franklin',sans-serif"}}>{syncing?"...":"SYNC NOW"}</button>
+          </div>
+          <div style={{background:"#fff",borderRadius:12,overflow:"hidden",border:"1px solid #E5E5E5",overflowX:"auto"}} ref={standingsRef}>
+            <div style={{background:N,padding:"14px 24px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+              <span style={{color:"#fff",fontSize:14,fontWeight:700}}>LEAGUE STANDINGS</span>
+              <div style={{display:"flex",alignItems:"center",gap:12}}>
+                <span style={{color:G,fontSize:11}}>TOTAL WINS ACROSS 7 TEAMS</span>
+                <button onClick={shareStandings} style={{background:G,color:N,border:"none",borderRadius:6,padding:"5px 12px",fontSize:10,fontWeight:700,fontFamily:"'Libre Franklin',sans-serif"}}>SHARE</button>
+              </div>
+            </div>
+            <table className="st-table" style={{width:"100%",borderCollapse:"collapse"}}>
+              <thead><tr style={{background:LN}}>{["RK","","MANAGER","WINS","GB","BEST TEAM"].map(function(h){return <th key={h} style={{padding:"10px 16px",fontSize:h==="WINS"?13:10,fontWeight:h==="WINS"?800:700,color:h==="WINS"?GR:N,letterSpacing:1.5,textAlign:h==="MANAGER"?"left":"center"}}>{h}</th>})}</tr></thead>
+              <tbody>{(function(){
+                // Calculate tied rankings
+                var ranks=[];var currentRank=1;
+                dR.forEach(function(m,i){
+                  if(i>0&&m.s.tw===dR[i-1].s.tw){ranks.push(ranks[i-1])}
+                  else{ranks.push(currentRank)}
+                  currentRank=i+2;
+                });
+                return dR.map(function(m,i){
+                var gb=ranks[i]===1?"-":(top-m.s.tw);
+                var mv=getMv(m.name,i+1);
+                var mvE=mv===null?"":mv>0?<span className="mu">{"▲"}{mv}</span>:mv<0?<span className="md">{"▼"}{Math.abs(mv)}</span>:<span className="ms">-</span>;
+                var isTied=i>0&&m.s.tw===dR[i-1].s.tw||i<dR.length-1&&m.s.tw===dR[i+1].s.tw;
+                return <tr key={m.name||i} className={ranks[i]===1&&m.s.tw>0?"gold-row":""} style={{background:ranks[i]===1?LG:i%2===0?"#FAFAFA":"#fff"}}>
+                  <td style={{padding:"14px 16px",textAlign:"center",fontWeight:800,fontSize:18,color:ranks[i]===1?G:N,fontFamily:"'Oswald','Arial Narrow',sans-serif"}}>{isTied?"T"+ranks[i]:ranks[i]}</td>
+                  <td style={{textAlign:"center",padding:"4px 2px"}}>{mvE}</td>
+                  <td style={{padding:"14px 16px",fontWeight:700,fontSize:15,color:N}}>
+                    <span style={{display:"inline-flex",alignItems:"center",gap:8}}>
+                      <span style={{width:24,height:24,borderRadius:"50%",background:MGR_COLORS[m.name]||GY,display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:12}}>{MGR_EMOJI[m.name]||""}</span>
+                      {m.name||"-"}{m.name==="Gainzy"?" 👑":""}
+                    </span>
+                  </td>
+                  <td style={{textAlign:"center",fontWeight:900,fontSize:24,color:GR,fontFamily:"'Oswald','Arial Narrow',sans-serif"}}>{m.s.tw}</td>
+                  <td style={{textAlign:"center",color:typeof gb==="number"?RD:GY,fontWeight:700,fontSize:15}}>{gb}</td>
+                  <td style={{textAlign:"center",fontSize:13,fontWeight:600,color:N}}>{m.s.bt?teamL(m.s.bt,16):""}{m.s.bw>0?" ("+m.s.bw+"W)":""}</td>
+                </tr>})
+              })()}</tbody>
+            </table>
+          </div>
+          {dlk&&dR.some(function(m){return(badges[m.name]||[]).length>0})&&<div style={{marginTop:24,background:"#fff",borderRadius:12,overflow:"hidden",border:"1px solid #E5E5E5"}}>
+            <div style={{background:N,padding:"14px 24px"}}><span style={{color:"#fff",fontSize:14,fontWeight:700}}>MILESTONE BADGES</span></div>
+            <div style={{padding:"16px 24px",display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(220px, 1fr))",gap:16}}>
+              {dR.map(function(m,i){var mb=badges[m.name]||[];if(mb.length===0)return null;return <div key={m.name} style={{padding:"12px 16px",background:i===0?LG:"#FAFAFA",borderRadius:8,border:"1px solid #E5E5E5"}}><div style={{fontSize:13,fontWeight:700,color:N,marginBottom:8}}>{m.name}</div>{mb.map(function(b,bi){return <div key={bi} style={{fontSize:12,color:GY,marginBottom:4}}>{b}</div>})}</div>})}
+            </div>
+          </div>}
+
+          {/* 2025-26 SEASON RESULTS */}
+          <div style={{marginTop:24,background:"#fff",borderRadius:12,overflow:"hidden",border:"1px solid #E5E5E5"}}>
+            <div style={{background:N,padding:"14px 24px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+              <span style={{color:"#fff",fontSize:14,fontWeight:700}}>2025-26 SEASON RESULTS</span>
+              <span style={{color:G,fontSize:11}}>FINAL STANDINGS</span>
+            </div>
+            <table style={{width:"100%",borderCollapse:"collapse"}}>
+              <thead><tr style={{background:LN}}>
+                {["RK","MANAGER","WINS","BEST TEAM","ROSTER"].map(function(h){return <th key={h} style={{padding:"10px 16px",fontSize:10,fontWeight:700,color:N,letterSpacing:1.5,textAlign:h==="MANAGER"||h==="ROSTER"?"left":"center"}}>{h}</th>})}
+              </tr></thead>
+              <tbody>
+                {[
+                  {rk:1,name:"Gainzy",w:310,best:"Thunder (64W)",teams:"Thunder 64, Pistons 60, Timberwolves 49, Magic 45, Suns 45, Grizzlies 25, Kings 22",color:LG},
+                  {rk:2,name:"Gallup (G$)",w:309,best:"Knicks (53W)",teams:"Knicks 53, Rockets 52, Hawks 46, Raptors 46, Hornets 44, Trail Blazers 42, Mavericks 26",color:"#FAFAFA"},
+                  {rk:3,name:"Rippe",w:303,best:"Spurs (62W)",teams:"Spurs 62, Celtics 56, Nuggets 54, Clippers 42, Bucks 32, Bulls 31, Pelicans 26",color:"#fff"},
+                  {rk:4,name:"Swaggy",w:269,best:"Lakers (53W)",teams:"Lakers 53, Cavaliers 52, 76ers 45, Heat 43, Warriors 37, Nets 20, Pacers 19",color:"#FAFAFA"}
+                ].map(function(m){return <tr key={m.rk} style={{background:m.color}}>
+                  <td style={{padding:"12px 16px",textAlign:"center",fontWeight:800,fontSize:18,color:m.rk===1?G:N,fontFamily:"'Oswald','Arial Narrow',sans-serif"}}>{m.rk}</td>
+                  <td style={{padding:"12px 16px",fontWeight:700,fontSize:15,color:N}}>{m.name}{m.rk===1?" \uD83C\uDFC6":""}</td>
+                  <td style={{textAlign:"center",fontWeight:900,fontSize:20,color:GR,fontFamily:"'Oswald','Arial Narrow',sans-serif"}}>{m.w}</td>
+                  <td style={{textAlign:"center",fontSize:12,fontWeight:600,color:N}}>{m.best}</td>
+                  <td style={{padding:"12px 16px",fontSize:11,color:GY}}>{m.teams}</td>
+                </tr>})}
+              </tbody>
+            </table>
+            <div style={{padding:"12px 24px",background:LN,display:"flex",justifyContent:"space-between",flexWrap:"wrap",gap:8}}>
+              <span style={{fontSize:11,color:N,fontWeight:600}}>Undrafted: Jazz (22W), Wizards (17W)</span>
+              <span style={{fontSize:11,color:GY}}>Margin of Victory: 1 win</span>
+            </div>
+          </div>
+
+          {/* TRASH TALK */}
+          <div style={{marginTop:24,background:"#fff",borderRadius:12,overflow:"hidden",border:"1px solid #E5E5E5"}}>
+            <div style={{background:N,padding:"10px 20px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+              <span style={{color:"#fff",fontSize:12,fontWeight:700}}>TRASH TALK</span>
+              <span style={{color:G,fontSize:9}}>{chatMsgs.length} msgs</span>
+            </div>
+            <div ref={chatRef} style={{height:220,overflowY:"auto",padding:"10px 16px",background:"#FAFAFA"}}>
+              {chatMsgs.length===0&&<div style={{textAlign:"center",padding:30,color:GY,fontSize:12}}>No messages yet. Start the trash talk!</div>}
+              {chatMsgs.map(function(m,i){
+                var t=new Date(m.ts);
+                var time=t.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"});
+                var date=t.toLocaleDateString([],{month:"short",day:"numeric"});
+                return <div key={i} style={{marginBottom:10}}>
+                  <div style={{display:"flex",alignItems:"baseline",gap:8}}>
+                    <span style={{fontSize:13,fontWeight:700,color:N}}>{m.name}</span>
+                    <span style={{fontSize:9,color:"#C0C0C0"}}>{date} {time}</span>
+                  </div>
+                  <div style={{fontSize:12,color:GY,marginTop:2}}>{m.msg}</div>
+                </div>
+              })}
+            </div>
+            <div style={{padding:"10px 16px",borderTop:"1px solid #E5E5E5"}}>
+              {!chatName.trim()?
+                <div style={{display:"flex",gap:8}}>
+                  <input value={chatName} onChange={function(e){setChatName(e.target.value)}} placeholder="Enter your name to chat..." style={{flex:1,padding:"8px 12px",border:"1px solid #DDD",borderRadius:6,fontSize:12,fontFamily:"'Libre Franklin',sans-serif"}}/>
+                </div>:
+                <div style={{display:"flex",gap:8,alignItems:"center"}}>
+                  <span style={{fontSize:10,fontWeight:700,color:G}}>{chatName}</span>
+                  <input value={chatInput} onChange={function(e){setChatInput(e.target.value)}} onKeyDown={function(e){if(e.key==="Enter")sendChat()}} placeholder="Talk trash..." style={{flex:1,padding:"8px 12px",border:"1px solid #DDD",borderRadius:6,fontSize:12,fontFamily:"'Libre Franklin',sans-serif"}}/>
+                  <button onClick={sendChat} style={{background:G,color:N,border:"none",borderRadius:6,padding:"8px 16px",fontSize:11,fontWeight:700,fontFamily:"'Libre Franklin',sans-serif"}}>SEND</button>
+                </div>}
+            </div>
+          </div>
+        </div>}
+
+        {tab==="rosters"&&<div>
+          {/* MANAGER ROSTERS */}
+          <div className="roster-grid" style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(240px, 1fr))",gap:12,marginBottom:20}}>
+            {dR.map(function(m,mi){var mColor=MGR_COLORS[m.name]||GY;return <div key={m.name||mi} style={{background:"#fff",borderRadius:10,overflow:"hidden",border:"1px solid #E5E5E5",borderTop:"3px solid "+mColor}}>
+              <div style={{background:N,padding:"10px 14px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                <span style={{display:"inline-flex",alignItems:"center",gap:8}}>
+                  <span style={{width:22,height:22,borderRadius:"50%",background:mColor,display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:11}}>{MGR_EMOJI[m.name]||""}</span>
+                  <span style={{color:"#fff",fontWeight:700,fontSize:14}}>{m.name||"-"}</span>
+                </span>
+                <span style={{color:G,fontWeight:900,fontSize:20,fontFamily:"'Oswald','Arial Narrow',sans-serif"}}>{m.s.tw}<span style={{fontSize:10,fontWeight:600,marginLeft:2}}>W</span></span>
+              </div>
+              <table style={{width:"100%",borderCollapse:"collapse"}}>
+                <thead><tr style={{background:LN}}><th style={{padding:"6px 12px",fontSize:9,fontWeight:700,color:N,textAlign:"left"}}>TEAM</th><th style={{padding:"6px 8px",fontSize:10,fontWeight:800,color:GR,textAlign:"center"}}>WINS</th></tr></thead>
+                <tbody>{[].concat(m.teams||[]).sort(function(a,b){return(rc[b]?rc[b].w:0)-(rc[a]?rc[a].w:0)}).map(function(t,ti){var r=rc[t]||{w:0,l:0};var tc=TEAM_COLORS[t]||"transparent";return <tr key={t} style={{background:ti%2===0?"#FAFAFA":"#fff",borderLeft:"3px solid "+tc}}><td style={{padding:"7px 12px",fontSize:12,color:N}}>{teamL(t,16)}</td><td style={{textAlign:"center",fontSize:15,fontWeight:800,color:GR}}>{r.w}</td></tr>})}</tbody>
+                <tfoot><tr style={{background:LG}}><td style={{padding:"8px 12px",fontWeight:700,fontSize:11,color:N}}>TOTAL WINS</td><td style={{textAlign:"center",fontWeight:900,fontSize:18,color:GR,fontFamily:"'Oswald','Arial Narrow',sans-serif"}}>{m.s.tw}</td></tr></tfoot>
+              </table>
+            </div>})}
+          </div>
+
+          {/* NBA STANDINGS BY DIVISION */}
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+            <div style={{fontSize:11,fontWeight:700,color:N,letterSpacing:1.5}}>NBA STANDINGS BY DIVISION</div>
+            <div style={{display:"flex",alignItems:"center",gap:8}}>
+              {!recUnlocked&&!editRec?
+                <input type="password" placeholder="Admin password" value={recPwd} onChange={function(e){setRecPwd(e.target.value)}} style={{padding:"5px 10px",border:"1px solid #DDD",borderRadius:6,fontSize:10,width:120,fontFamily:"'Libre Franklin',sans-serif"}}/>:null}
+              {recUnlocked?
+                <button onClick={function(){setEditRec(!editRec)}} style={{background:editRec?GR:N,color:"#fff",border:"none",padding:"6px 16px",fontSize:11,fontWeight:700,borderRadius:6,fontFamily:"'Libre Franklin',sans-serif"}}>{editRec?"Done":"Edit"}</button>:null}
+            </div>
+          </div>
+          <div className="division-grid" style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(300px, 1fr))",gap:12}}>
+            {[
+              {name:"Atlantic",conf:"East",teams:["Celtics","Nets","Knicks","76ers","Raptors"]},
+              {name:"Central",conf:"East",teams:["Bulls","Cavaliers","Pistons","Pacers","Bucks"]},
+              {name:"Southeast",conf:"East",teams:["Hawks","Hornets","Heat","Magic","Wizards"]},
+              {name:"Northwest",conf:"West",teams:["Nuggets","Timberwolves","Thunder","Blazers","Jazz"]},
+              {name:"Pacific",conf:"West",teams:["Warriors","Clippers","Lakers","Suns","Kings"]},
+              {name:"Southwest",conf:"West",teams:["Mavericks","Rockets","Grizzlies","Pelicans","Spurs"]}
+            ].map(function(div){
+              return <div key={div.name} style={{background:"#fff",borderRadius:10,overflow:"hidden",border:"1px solid #E5E5E5"}}>
+                <div style={{background:N,padding:"8px 14px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                  <span style={{color:"#fff",fontSize:11,fontWeight:700}}>{div.name}</span>
+                  <span style={{color:G,fontSize:9}}>{div.conf==="East"?"Eastern":"Western"}</span>
+                </div>
+                <table style={{width:"100%",borderCollapse:"collapse"}}>
+                  <thead><tr style={{background:LN}}>
+                    <th style={{padding:"6px 10px",fontSize:8,fontWeight:700,color:N,textAlign:"left",letterSpacing:1}}>TEAM</th>
+                    <th style={{padding:"6px 6px",fontSize:9,fontWeight:800,color:GR,textAlign:"center"}}>W</th>
+                    <th style={{padding:"6px 6px",fontSize:8,fontWeight:600,color:"#C0C0C0",textAlign:"center"}}>L</th>
+                    <th style={{padding:"6px 10px",fontSize:8,fontWeight:700,color:N,textAlign:"left"}}>OWNER</th>
+                  </tr></thead>
+                  <tbody>
+                    {[].concat(div.teams).sort(function(a,b){return(rc[b]?rc[b].w:0)-(rc[a]?rc[a].w:0)}).map(function(t,i){
+                      var r=rc[t]||{w:0,l:0};var owner="-";dM.forEach(function(m){if((m.teams||[]).includes(t))owner=m.name});
+                      return <tr key={t} style={{background:i%2===0?"#FAFAFA":"#fff"}}>
+                        <td style={{padding:"6px 10px",fontWeight:600,fontSize:11,color:N}}>{teamL(t,14)}</td>
+                        <td style={{textAlign:"center",padding:"6px 4px"}}>{editRec?<input type="number" value={r.w} onChange={function(e){setRc(t,"w",e.target.value)}} style={{width:44,textAlign:"center",border:"2px solid "+GR,borderRadius:3,padding:2,fontSize:12,fontWeight:800,color:GR,fontFamily:"'Libre Franklin'"}}/>:<span style={{fontWeight:800,color:GR,fontSize:13}}>{r.w}</span>}</td>
+                        <td style={{textAlign:"center",padding:"6px 4px"}}>{editRec?<input type="number" value={r.l} onChange={function(e){setRc(t,"l",e.target.value)}} style={{width:40,textAlign:"center",border:"1px solid #DDD",borderRadius:3,padding:2,fontSize:9,color:"#C0C0C0",fontFamily:"'Libre Franklin'"}}/>:<span style={{color:"#C0C0C0",fontSize:9}}>{r.l}</span>}</td>
+                        <td style={{padding:"6px 10px",fontSize:10,color:owner==="-"?"#CCC":G,fontWeight:600}}>{owner}</td>
+                      </tr>
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            })}
+          </div>
+        </div>}
+
+        {tab==="draft"&&<div>
+          <div style={{display:"flex",justifyContent:"flex-end",marginBottom:8}}>
+            {!adm?<button onClick={function(){setAdm(true)}} style={{background:"#fff",border:"1px solid #CCC",borderRadius:6,padding:"8px 14px",fontSize:11,color:GY,fontFamily:"'Libre Franklin',sans-serif"}}>Admin</button>:
+            <div style={{display:"flex",alignItems:"center",gap:10,padding:"10px 16px",background:"#fff",borderRadius:8,border:"1px solid "+RD}}>
+              <span style={{fontSize:11,fontWeight:700,color:RD}}>ADMIN</span>
+              {!isAdm?<input type="password" placeholder="Password" value={pwd} onChange={function(e){setPwd(e.target.value)}} style={{padding:"6px 10px",border:"1px solid #DDD",borderRadius:6,fontSize:12,width:120,fontFamily:"'Libre Franklin',sans-serif"}}/>:
+              <div style={{display:"flex",gap:6}}><button onClick={undo} style={{background:RD,color:"#fff",border:"none",borderRadius:6,padding:"8px 16px",fontSize:12,fontWeight:700,fontFamily:"'Libre Franklin',sans-serif"}}>UNDO PICK</button><button onClick={saveWeek} style={{background:N,color:"#fff",border:"none",borderRadius:6,padding:"8px 16px",fontSize:12,fontWeight:700,fontFamily:"'Libre Franklin',sans-serif"}}>SAVE WEEK</button></div>}
+              <button onClick={function(){setAdm(false);setPwd("")}} style={{background:"transparent",border:"none",fontSize:14,color:GY}}>x</button>
+            </div>}
+          </div>
+
+          <div className="draft-layout" style={{display:"flex",gap:12,alignItems:"stretch"}}>
+            {/* LEFT - DRAFT CONTENT */}
+            <div style={{flex:1,minWidth:0}}>
+          {!dm&&!dlk?<div style={{textAlign:"center",padding:40}}>
+            <div style={{fontSize:18,fontWeight:700,color:N,marginBottom:12}}>Ready to draft for 2026-27?</div>
+            <div style={{fontSize:15,fontWeight:700,color:G,marginBottom:8}}>2026-27 DRAFT</div>
+            <div style={{fontSize:13,color:GY,marginBottom:24}}>Snake format - 7 rounds - 4 managers - 28 picks</div>
+            <button onClick={startDraft} style={{background:G,color:N,border:"none",padding:"14px 36px",fontSize:14,fontWeight:800,borderRadius:8,fontFamily:"'Libre Franklin',sans-serif"}}>START DRAFT</button>
+          </div>:dlk?<div>
+            {/* LOCKED DRAFT RESULTS */}
+            <div ref={draftResultsRef} style={{background:"#fff",borderRadius:10,overflow:"hidden",border:"1px solid #E5E5E5"}}>
+              <div style={{background:N,padding:"10px 20px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                <div style={{display:"flex",alignItems:"center",gap:10}}>
+                  <span style={{color:"#fff",fontSize:13,fontWeight:700}}>2026-27 DRAFT RESULTS</span>
+                  <span style={{background:RD,color:"#fff",padding:"2px 8px",borderRadius:10,fontSize:9,fontWeight:700}}>LOCKED</span>
+                </div>
+                <span style={{color:G,fontSize:10}}>Snake Draft - 7 Rounds</span>
+              </div>
+              {dor&&<table style={{width:"100%",borderCollapse:"collapse"}}>
+                <thead><tr style={{background:LN}}><th style={{padding:"8px",fontSize:9,fontWeight:700,color:N,width:36}}>RD</th>{dor.map(function(mIdx,pos){return <th key={pos} style={{padding:"8px 12px",fontSize:11,fontWeight:700,color:N}}>{mg[mIdx]?mg[mIdx].name:dmg[mIdx]||"Mgr "+(mIdx+1)}<div style={{fontSize:8,color:G,marginTop:1}}>Pick #{pos+1}</div></th>})}</tr></thead>
+                <tbody>{(function(){
+                  // Reconstruct full draft board from managers.teams using snake order
+                  var board={};
+                  dor.forEach(function(mIdx){
+                    var teams=(mg[mIdx]&&mg[mIdx].teams)||dpk[mIdx]||[];
+                    var picks=dpk[mIdx]||[];
+                    // Use dpk if available and same length, otherwise use manager teams
+                    board[mIdx]=picks.length>=teams.length?picks:teams;
+                  });
+                  return [0,1,2,3,4,5,6].map(function(rd){
+                    return <tr key={rd} style={{background:rd%2===0?"#FAFAFA":"#fff"}}>
+                      <td style={{textAlign:"center",fontWeight:800,color:N,fontSize:12,padding:8,background:LN}}>{rd+1}</td>
+                      {dor.map(function(mIdx,col){
+                        var tp=(board[mIdx]||[])[rd]||"";
+                        return <td key={col} style={{padding:"8px 10px",textAlign:"center",fontSize:12,fontWeight:600,color:tp?N:"#CCC"}}>{tp?teamL(tp,14):"-"}</td>
+                      })}
+                    </tr>
+                  });
+                })()}</tbody>
+              </table>}
+              <div style={{padding:"10px 20px",background:LG,display:"flex",justifyContent:"space-between",flexWrap:"wrap",gap:6}}>
+                <span style={{fontSize:11,color:N,fontWeight:600}}>Undrafted: {ALL_TEAMS.filter(function(t){return!taken.includes(t)}).join(", ")||"None"}</span>
+                <span style={{fontSize:11,color:GY}}>2026-27 Season</span>
+              </div>
+              {shareCaption!==null&&<div style={{padding:"10px 20px",background:"#fff",borderTop:"1px solid #E5E5E5",textAlign:"center"}}>
+                <div style={{fontSize:13,fontWeight:700,color:N,fontStyle:"italic"}}>{shareCaption||""}</div>
+              </div>}
+            </div>
+
+            {/* SHARE WITH CAPTION */}
+            <div style={{marginTop:12,display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
+              <input value={shareCaption===null?"":shareCaption} onChange={function(e){setShareCaption(e.target.value)}} placeholder="Add a caption..." style={{flex:1,padding:"8px 12px",border:"1px solid #DDD",borderRadius:6,fontSize:12,fontFamily:"'Libre Franklin',sans-serif",minWidth:200}}/>
+              <button onClick={shareDraftResults} style={{background:G,color:N,border:"none",borderRadius:6,padding:"8px 20px",fontSize:11,fontWeight:700,fontFamily:"'Libre Franklin',sans-serif"}}>SHARE DRAFT</button>
+            </div>
+          </div>:
+          <div>
+            <div className="draft-mgr-grid" style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,marginBottom:12}}>
+              {dmg.map(function(name,i){return <div key={i}><div style={{fontSize:9,fontWeight:700,color:GY,letterSpacing:1,marginBottom:3}}>MGR {i+1}</div><input value={name||""} onChange={function(e){setDMgr(i,e.target.value)}} placeholder={"Manager "+(i+1)} disabled={nlk} style={{width:"100%",padding:"8px 10px",border:cur===i&&dor?"2px solid "+G:"1px solid #DDD",borderRadius:6,fontSize:13,fontWeight:600,color:N,boxSizing:"border-box",background:nlk?"#F3F3F3":(cur===i&&dor?LG:"#fff"),fontFamily:"'Libre Franklin',sans-serif",opacity:nlk?0.8:1}}/></div>})}
+            </div>
+            {!dor&&<div style={{textAlign:"center",padding:32,background:"#fff",borderRadius:12,border:"1px solid #E5E5E5",marginBottom:20}}>
+              {shuffled?<div style={{marginBottom:24}}><div style={{fontSize:11,fontWeight:700,color:GY,letterSpacing:2,marginBottom:16}}>{anim?"RANDOMIZING...":"DRAFT ORDER SET"}</div><div style={{display:"flex",justifyContent:"center",gap:16,flexWrap:"wrap"}}>{shuffled.map(function(mIdx,pos){return <div key={pos} style={{background:anim?N+"10":N,borderRadius:10,padding:"16px 20px",minWidth:100,border:"2px solid "+(anim?G+"50":G)}}><div style={{fontSize:28,fontWeight:900,color:anim?N:G,fontFamily:"'Oswald','Arial Narrow',sans-serif"}}>#{pos+1}</div><div style={{fontSize:13,fontWeight:700,marginTop:4,color:anim?GY:"#fff"}}>{dmg[mIdx]||"Mgr "+(mIdx+1)}</div></div>})}</div></div>:
+              <div><div style={{fontSize:22,marginBottom:8}}>{"🎲"}</div><div style={{fontSize:16,fontWeight:700,color:N,marginBottom:4}}>Draft Order Randomizer</div><div style={{fontSize:12,color:GY,marginBottom:20}}>Enter all 4 manager names, then click below.<br/><span style={{fontWeight:700,color:RD}}>One time only - result is final.</span></div></div>}
+              <button onClick={doRandom} disabled={anim||!named} style={{background:named&&!anim?G:MG,color:named?N:"#999",border:"none",padding:"14px 40px",fontSize:14,fontWeight:800,borderRadius:8,cursor:named&&!anim?"pointer":"not-allowed",fontFamily:"'Libre Franklin',sans-serif"}}>{anim?"RANDOMIZING...":shuffled?"ORDER LOCKED":"RANDOMIZE DRAFT ORDER"}</button>
+              {!named&&!shuffled&&<div style={{fontSize:11,color:RD,marginTop:8}}>Enter all 4 manager names first</div>}
+            </div>}
+            {dor&&<div style={{background:N,borderRadius:8,padding:"10px 20px",marginBottom:10,display:"flex",justifyContent:"center",alignItems:"center",gap:20,flexWrap:"wrap"}}>
+              <span style={{fontSize:11,fontWeight:700,color:G,letterSpacing:2}}>DRAFT ORDER</span>
+              {dor.map(function(mIdx,pos){return <div key={pos} style={{display:"flex",alignItems:"center",gap:6}}><span style={{fontSize:16,fontWeight:900,color:G,fontFamily:"'Oswald','Arial Narrow',sans-serif"}}>{pos+1}.</span><span style={{fontSize:13,fontWeight:600,color:"#fff"}}>{dmg[mIdx]}</span></div>})}
+              <span style={{fontSize:10,color:"#ffffff50"}}>LOCKED</span>
+            </div>}
+            {dor&&dr<7&&<div style={{background:LG,borderRadius:6,padding:"8px 16px",marginBottom:10,border:"1px solid "+G+"60",display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:6}}>
+              <div><span style={{fontWeight:800,color:N,fontSize:13}}>Round {dr+1}</span><span style={{color:GY,margin:"0 6px"}}>-</span><span style={{fontWeight:600,color:G,fontSize:13}}>{dmg[cur]||"Manager "+(cur+1)} is on the clock</span></div>
+              <span style={{fontSize:11,color:GY}}>Pick #{dr*4+dp+1} of 28</span>
+            </div>}
+            {dor&&<div style={{background:"#fff",borderRadius:10,overflow:"hidden",border:"1px solid #E5E5E5",marginBottom:12,overflowX:"auto"}}>
+              <table style={{width:"100%",borderCollapse:"collapse",minWidth:480}}>
+                <thead><tr style={{background:N}}><th style={{padding:"8px",color:"#fff",fontSize:9,fontWeight:700,width:36}}>RD</th>{dor.map(function(mIdx,pos){return <th key={pos} style={{padding:"8px 12px",color:"#fff",fontSize:11,fontWeight:700}}>{dmg[mIdx]||"Mgr "+(mIdx+1)}<div style={{fontSize:8,color:G,marginTop:1}}>#{pos+1}</div></th>})}</tr></thead>
+                <tbody>{[0,1,2,3,4,5,6].map(function(rd){return <tr key={rd} style={{background:rd%2===0?"#FAFAFA":"#fff"}}><td style={{textAlign:"center",fontWeight:800,color:N,fontSize:12,padding:8,background:LN}}>{rd+1}</td>{dor.map(function(mIdx,col){var tp=(dpk[mIdx]||[])[rd]||"";var ic=dr===rd&&cur===mIdx&&!tp;return <td key={col} style={{padding:"8px 10px",textAlign:"center",fontSize:12,fontWeight:tp?600:400,color:tp?N:"#CCC",background:ic?G+"25":"inherit",border:ic?"2px solid "+G:"none"}}>{tp?teamL(tp,14):(ic?"...":"-")}</td>})}</tr>})}</tbody>
+              </table>
+            </div>}
+            {dor&&dr<7&&<div><div style={{fontSize:10,fontWeight:700,color:N,letterSpacing:1.5,marginBottom:8}}>AVAILABLE ({avail.length})</div><div style={{display:"flex",flexWrap:"wrap",gap:6}}>{avail.map(function(t){return <button key={t} onClick={function(){doPick(t)}} style={{background:"#fff",border:"1px solid #DDD",borderRadius:6,padding:"6px 12px",fontSize:12,fontWeight:500,color:N,fontFamily:"'Libre Franklin',sans-serif"}} onMouseEnter={function(e){e.currentTarget.style.background=LG;e.currentTarget.style.borderColor=G}} onMouseLeave={function(e){e.currentTarget.style.background="#fff";e.currentTarget.style.borderColor="#DDD"}}>{teamL(t,14)}</button>})}</div></div>}
+            {dr>=7&&<div style={{textAlign:"center",padding:20,background:LG,borderRadius:10,border:"1px solid "+G}}><div style={{fontSize:24,marginBottom:4}}>{"🎉"}</div><div style={{fontSize:16,fontWeight:800,color:N}}>Draft Complete - Rosters Locked!</div><div style={{fontSize:13,color:GY,marginTop:4}}>All picks are final. Check the Standings and Rosters tabs.</div><div style={{marginTop:8,fontSize:12,color:GY}}>Undrafted: {ALL_TEAMS.filter(function(t){return!taken.includes(t)}).join(", ")||"None"}</div></div>}
+          </div>}
+            </div>
+          </div>
+        </div>}
+
+
+        {/* RULES TAB */}
+        {tab==="rules"&&<div>
+          {/* HERO */}
+          <div style={{background:N,borderRadius:12,padding:"32px 24px",textAlign:"center",marginBottom:24,position:"relative",overflow:"hidden"}}>
+            <div style={{position:"absolute",top:0,right:0,width:300,height:"100%",background:"linear-gradient(135deg,transparent 30%,"+G+"10)",pointerEvents:"none"}}/>
+            <div style={{position:"relative"}}>
+              <div style={{fontSize:10,color:G,fontWeight:700,letterSpacing:4,marginBottom:8}}>OFFICIAL RULEBOOK</div>
+              <div style={{fontSize:26,fontWeight:900,color:"#fff",fontFamily:"'Oswald','Arial Narrow',sans-serif",marginBottom:6}}>NBA Team League 2026-27</div>
+              <div style={{fontSize:13,color:"#ffffff70"}}>Season 3 - Est. 2024 - 4 Managers - 7 Teams - 1 Champion</div>
+            </div>
+          </div>
+
+          {/* CORE PRINCIPLE */}
+          <div style={{background:LG,borderRadius:10,padding:"20px 24px",marginBottom:24,border:"1px solid "+G+"40",textAlign:"center"}}>
+            <div style={{fontSize:22,fontWeight:900,color:N,fontFamily:"'Oswald','Arial Narrow',sans-serif"}}>WINS ARE ALL THAT MATTER</div>
+            <div style={{fontSize:12,color:GY,marginTop:6}}>No points. No stats. Just wins. The manager with the most combined regular season wins across their 7 teams takes the crown and the $150.</div>
+          </div>
+
+          {/* RULES SECTIONS */}
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(320px, 1fr))",gap:16,marginBottom:24}}>
+            {[
+              {icon:"01",title:"THE GAME",items:[
+                "NBA Team League is a season-long competition where 4 managers draft real NBA teams and compete based on total regular season wins.",
+                "Each manager builds a portfolio of 7 NBA teams through a snake draft.",
+                "From Opening Night (October 20, 2026) through the final day of the regular season (April 11, 2027), every win your teams earn counts toward your total.",
+                "The manager with the highest combined win total is crowned NBA Team League Champion.",
+                "Now in its 3rd season. Established 2024."
+              ]},
+              {icon:"02",title:"THE DRAFT",items:[
+                "Format: Snake draft - 7 rounds, 4 managers, 28 teams drafted.",
+                "2 of 30 NBA teams go undrafted each season. For 2026-27 that is the Nets and Kings.",
+                "Draft order is determined by a one-time randomizer. Once set, the order is locked permanently.",
+                "Odd rounds (1, 3, 5, 7) follow the set order. Even rounds (2, 4, 6) reverse the order.",
+                "All picks are final. No trades. No drops. No substitutions."
+              ]},
+              {icon:"03",title:"SCORING & STANDINGS",items:[
+                "Only NBA regular season wins count toward the standings. Losses, win percentage, and playoff results have zero impact on the regular season race.",
+                "Each manager's 7 team wins are totaled and ranked against the other managers.",
+                "Standings sync automatically from ESPN throughout the season.",
+                "Weekly movement arrows track who is rising and falling in the standings.",
+                "Milestone badges are awarded automatically (300 Club, Sharpshooter, Clean Sweep, etc.)."
+              ]},
+              {icon:"04",title:"TIEBREAKER",items:[
+                "If two or more managers are tied in total wins at the end of the regular season, the tiebreaker goes to the manager whose single best team has the most wins.",
+                "Example: If Manager A and Manager B both have 290 wins, but Manager A's best team has 62 wins and Manager B's best team has 58 wins, Manager A wins."
+              ]},
+              {icon:"05",title:"ENTRY & PRIZES",items:[
+                "Entry fee: $100 per manager.",
+                "Breakdown: $50 regular season + $25 NBA Cup + $25 NBA Finals.",
+                "Total prize pool: $300.",
+                "Regular Season Champion: $150 (most total wins, winner take all).",
+                "NBA Cup (in-season champion): $75.",
+                "NBA Finals champion: $75.",
+                "Best Single Team: Bragging rights and the Sharpshooter badge."
+              ]},
+              {icon:"06",title:"NBA CUP & NBA FINALS",items:[
+                "The manager who drafted the Emirates NBA Cup 2026 champion wins the NBA Cup pool. The Cup final is December 11 at Hinkle Fieldhouse in Indianapolis.",
+                "The manager who drafted the 2027 NBA Finals champion wins the NBA Finals pool.",
+                "Each pool: $25 entry per manager, $75 winner-take-all.",
+                "No separate pick required. If your drafted team wins it all, you win automatically.",
+                "If either winner is one of the 2 undrafted teams, all participants are banned from NBA Team League forever. No exceptions. No appeals. Draft wisely."
+              ]},
+              {icon:"07",title:"COMMISSIONER",items:[
+                "The Commissioner manages the league, updates win/loss records if needed, and resolves any disputes.",
+                "Commissioner has admin access to edit records, undo picks, and save weekly snapshots.",
+                "All admin actions are password-protected.",
+                "Commissioner: Mike Rippe (@michaelrippe)"
+              ]},
+              {icon:"08",title:"LEAGUE HISTORY",items:[
+                "2025-26 Champion: Gainzy - 310 total wins.",
+                "2025-26 Runner-up: Gallup (G$) - 309 wins. Margin: 1 win.",
+                "2025-26 Third: Rippe - 303 wins. Fourth: Swaggy - 269 wins.",
+                "2025-26 NBA Cup: Knicks over Spurs (owner: G$).",
+                "2024-25 Champion: Rippe - 326 total wins.",
+                "The league has crowned a champion every season since 2024."
+              ]}
+            ].map(function(section){return <div key={section.title} style={{background:"#fff",borderRadius:12,overflow:"hidden",border:"1px solid #E5E5E5"}}>
+              <div style={{background:N,padding:"12px 20px",display:"flex",alignItems:"center",gap:12}}>
+                <span style={{color:G,fontSize:16,fontWeight:900,fontFamily:"'Oswald','Arial Narrow',sans-serif"}}>{section.icon}</span>
+                <span style={{color:"#fff",fontSize:12,fontWeight:700,letterSpacing:1}}>{section.title}</span>
+              </div>
+              <div style={{padding:"16px 20px"}}>
+                {section.items.map(function(item,i){return <div key={i} style={{fontSize:12,color:GY,lineHeight:1.7,marginBottom:6,paddingLeft:10,borderLeft:"2px solid "+(i===0?G:"transparent")}}>
+                  {item}
+                </div>})}
+              </div>
+            </div>})}
+          </div>
+
+          {/* KEY DATES */}
+          <div style={{background:"#fff",borderRadius:12,overflow:"hidden",border:"1px solid #E5E5E5",marginBottom:24}}>
+            <div style={{background:N,padding:"12px 20px"}}><span style={{color:"#fff",fontSize:12,fontWeight:700}}>KEY DATES - 2026-27 SEASON</span></div>
+            <div style={{padding:"16px 20px",display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(200px, 1fr))",gap:12}}>
+              {[
+                {iso:"2026-10-20",date:"Oct 20",label:"Opening Night - BOS @ DET"},
+                {iso:"2026-10-30",date:"Oct 30",label:"NBA Cup Group Play Begins"},
+                {iso:"2026-12-11",date:"Dec 11",label:"NBA Cup Final - Indianapolis"},
+                {iso:"2027-02-21",date:"Feb 21",label:"All-Star Game - Phoenix"},
+                {iso:"2027-04-11",date:"Apr 11",label:"Regular Season Ends"},
+                {iso:"2027-06-30",date:"June",label:"NBA Finals",fixed:"UPCOMING"}
+              ].map(function(d0){var diff=Math.ceil((new Date(d0.iso+"T23:59:59")-new Date())/864e5);var d={date:d0.date,label:d0.label,status:d0.fixed&&diff>=0?d0.fixed:diff<0?"COMPLETE":diff===0?"TODAY":diff+(diff===1?" DAY":" DAYS")};return d}).map(function(d){return <div key={d.label} style={{display:"flex",alignItems:"center",gap:12,padding:"8px 0"}}>
+                <div style={{minWidth:50,fontSize:13,fontWeight:800,color:N}}>{d.date}</div>
+                <div style={{flex:1}}>
+                  <div style={{fontSize:12,fontWeight:600,color:N}}>{d.label}</div>
+                </div>
+                <span style={{fontSize:9,fontWeight:700,color:d.status==="COMPLETE"?GR:d.status==="UPCOMING"?GY:G,letterSpacing:1}}>{d.status}</span>
+              </div>})}
+            </div>
+          </div>
+
+          {/* EXPANDING - SIGN UP */}
+          <div style={{marginTop:24,background:"#fff",borderRadius:12,overflow:"hidden",border:"1px solid #E5E5E5",marginBottom:24}}>
+            <div style={{background:N,padding:"12px 20px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+              <span style={{color:"#fff",fontSize:12,fontWeight:700}}>COMING SOON - MORE LEAGUES</span>
+              <span style={{color:G,fontSize:9}}>SIGN UP FOR EARLY ACCESS</span>
+            </div>
+            <div style={{padding:"16px 20px"}}>
+              <div style={{display:"flex",gap:12,marginBottom:16,flexWrap:"wrap",justifyContent:"center"}}>
+                {[
+                  {name:"MLB",logo:"https://a.espncdn.com/combiner/i?img=/i/teamlogos/leagues/500/mlb.png&w=100",when:"Spring 2027"},
+                  {name:"NFL",logo:"https://a.espncdn.com/combiner/i?img=/i/teamlogos/leagues/500/nfl.png&w=100",when:"Fall 2027"},
+                  {name:"NHL",logo:"https://a.espncdn.com/combiner/i?img=/i/teamlogos/leagues/500/nhl.png&w=100",when:"Fall 2027"}
+                ].map(function(lg){
+                  var sel=signLeagues.includes(lg.name);
+                  return <div key={lg.name} onClick={function(){toggleLeague(lg.name)}} style={{textAlign:"center",padding:"12px 16px",borderRadius:10,border:sel?"2px solid "+G:"1px solid #E5E5E5",cursor:"pointer",minWidth:80}}>
+                    <img src={lg.logo} alt={lg.name} style={{width:36,height:36,objectFit:"contain",marginBottom:4}} onError={function(e){e.target.style.display="none"}}/>
+                    <div style={{fontSize:11,fontWeight:700,color:N}}>{lg.name}</div>
+                    <div style={{fontSize:8,color:sel?GR:GY}}>{sel?"SELECTED":lg.when}</div>
+                  </div>
+                })}
+              </div>
+              {signSent?<div style={{textAlign:"center",padding:"12px",fontSize:13,color:GR,fontWeight:600}}>You're on the list!</div>:
+              <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+                <input value={signName} onChange={function(e){setSignName(e.target.value)}} placeholder="Name" style={{flex:1,minWidth:100,padding:"8px 12px",border:"1px solid #DDD",borderRadius:6,fontSize:12,fontFamily:"'Libre Franklin',sans-serif"}}/>
+                <input value={signEmail} onChange={function(e){setSignEmail(e.target.value)}} placeholder="Email" type="email" style={{flex:2,minWidth:150,padding:"8px 12px",border:"1px solid #DDD",borderRadius:6,fontSize:12,fontFamily:"'Libre Franklin',sans-serif"}}/>
+                <button onClick={submitSignup} disabled={!signName.trim()||!signEmail.trim()} style={{background:signName.trim()&&signEmail.trim()?G:MG,color:signName.trim()&&signEmail.trim()?N:"#999",border:"none",borderRadius:6,padding:"8px 20px",fontSize:11,fontWeight:700,fontFamily:"'Libre Franklin',sans-serif"}}>SIGN UP</button>
+              </div>}
+            </div>
+          </div>
+
+          {/* SUPPORT THE LEAGUE */}
+          <div style={{background:N,borderRadius:12,padding:"24px",textAlign:"center"}}>
+            <div style={{fontSize:11,color:G,fontWeight:700,letterSpacing:3,marginBottom:6}}>SUPPORT THE LEAGUE</div>
+            <div style={{fontSize:18,fontWeight:900,color:"#fff",fontFamily:"'Oswald','Arial Narrow',sans-serif",marginBottom:6}}>Buy the Commissioner a Coffee</div>
+            <a href="https://venmo.com/michaelrippe?txn=pay&amount=1&note=NBA%20Team%20League%20Support" target="_blank" rel="noopener noreferrer" style={{display:"inline-flex",alignItems:"center",gap:8,background:"#008CFF",color:"#fff",textDecoration:"none",padding:"10px 28px",borderRadius:24,fontSize:13,fontWeight:700,fontFamily:"'Libre Franklin',sans-serif"}}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M19.5 3.5c.8 1.1 1.2 2.3 1.2 3.8 0 4.7-4 10.8-7.2 15.1H6.8L4 3.8l5.4-.5 1.6 12.8c1.5-2.4 3.3-6.2 3.3-8.8 0-1.3-.2-2.2-.6-3l5.8-.8z"/></svg>
+              $1 via Venmo
+            </a>
+            <div style={{fontSize:9,color:"#ffffff40",marginTop:8}}>@michaelrippe</div>
+          </div>
+        </div>}
+
+      </div>
+
+      <div style={{textAlign:"center",padding:"12px 0 16px",fontSize:10,color:GY}}>NBA Team League 2026-27 - Est. 2024 - $300 Prize Pool - Defending Champ: Gainzy</div>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
