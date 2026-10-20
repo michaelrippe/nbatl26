@@ -29,8 +29,8 @@ button:active{transform:scale(0.97)}
 .ms{color:#6B7280;font-size:10px}
 .glass{background:rgba(255,248,235,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.4)}
 .gold-row{animation:goldGlow 3s ease-in-out infinite;border-radius:8px}
-.ticker-wrap{overflow:hidden;width:100%;background:#1f1008;padding:6px 0}
-.ticker-track{display:flex;gap:32px;white-space:nowrap;animation:tickerScroll 60s linear infinite;width:max-content}
+.ticker-wrap{overflow:hidden;width:100%;background:#0B1E45;border-bottom:3px solid #C9082A;padding:6px 0}
+.ticker-track{display:flex;gap:32px;white-space:nowrap;animation:tickerScroll 30s linear infinite;width:max-content}
 @media(max-width:600px){
 h1{font-size:22px!important}
 .hdr{padding:16px 16px 12px!important}
@@ -43,7 +43,7 @@ h1{font-size:22px!important}
 .draft-layout{flex-direction:column!important}
 .draft-sidebar{width:100%!important;min-width:0!important;position:relative!important;top:0!important}
 .division-grid{grid-template-columns:1fr!important}
-.ticker-track{animation-duration:30s}
+.ticker-track{animation-duration:15s}
 }
 </style>
 </head>
@@ -162,7 +162,7 @@ function App(){
     },100)
   }
   const isAdm=pwd==="rippe26";
-  const N="#3A2112",G="#E8903A",LG="#FFF1DC",LN="#F3E4CC",GR="#2E7D32",RD="#C62828",GY="#6B5B4B",MG="#D9CBB8";
+  const N="#3A2112",G="#E8903A",LG="#FFF1DC",LN="#F3E4CC",GR="#2E7D32",RD="#C62828",GY="#6B5B4B",MG="#D9CBB8",NB="#17408B",NR="#C9082A",NBD="#0B2A6B";
 
   React.useEffect(function(){
     GAME.on("value",function(snap){
@@ -180,16 +180,6 @@ function App(){
     return function(){GAME.off()}
   },[]);
 
-  // Chat listener
-  React.useEffect(function(){
-    var chatDB=DB.ref("nbatl26/chat");
-    chatDB.orderByChild("ts").limitToLast(50).on("value",function(snap){
-      var d=snap.val();
-      if(d){var msgs=Object.keys(d).map(function(k){return d[k]}).sort(function(a,b){return a.ts-b.ts});setChatMsgs(msgs)}
-      else{setChatMsgs([])}
-    });
-    return function(){chatDB.off()}
-  },[]);
 
   // Auto weekly snapshot - runs once per Monday
   React.useEffect(function(){
@@ -358,25 +348,26 @@ function App(){
 
   return (
     <div style={{fontFamily:"'Libre Franklin',sans-serif",minHeight:"100vh"}}>
-      <div className="hdr" style={{background:"linear-gradient(270deg,#3A2112,#26140A,#3A2112,#53301A)",backgroundSize:"400% 400%",animation:"headerShift 12s ease infinite",padding:"16px 32px 12px",position:"relative",overflow:"hidden",borderBottom:"4px solid #E8903A"}}>
-        <svg aria-hidden="true" width="150" height="150" viewBox="0 0 100 100" style={{position:"absolute",right:12,top:-30,opacity:.18,pointerEvents:"none"}}><circle cx="50" cy="50" r="46" fill="#A0522D" stroke="#1a0c04" strokeWidth="2"/><path d="M50 4V96M4 50H96" stroke="#1a0c04" strokeWidth="2" fill="none"/><path d="M16 16C34 32 34 68 16 84M84 16C66 32 66 68 84 84" stroke="#1a0c04" strokeWidth="2" fill="none"/></svg>
-        <div className="hdr-row" style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end",position:"relative"}}>
+      <div className="hdr" style={{background:"linear-gradient(135deg,#0B2A6B 0%,#17408B 55%,#0B2A6B 100%)",padding:"0 32px 0",position:"relative",overflow:"hidden",borderBottom:"5px solid #C9082A"}}>
+        <div style={{position:"absolute",top:0,left:0,right:0,height:6,background:"linear-gradient(90deg,#C9082A 0 33%,#fff 33% 66%,#C9082A 66% 100%)"}}/>
+        <svg aria-hidden="true" width="190" height="190" viewBox="0 0 100 100" style={{position:"absolute",right:-10,top:-40,opacity:.14,pointerEvents:"none"}}><circle cx="50" cy="50" r="46" fill="none" stroke="#fff" strokeWidth="2.5"/><path d="M50 4V96M4 50H96" stroke="#fff" strokeWidth="2.5" fill="none"/><path d="M16 16C34 32 34 68 16 84M84 16C66 32 66 68 84 84" stroke="#fff" strokeWidth="2.5" fill="none"/></svg>
+        <div className="hdr-row" style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end",position:"relative",paddingTop:22}}>
           <div>
-            <div style={{color:G,fontSize:11,fontWeight:700,letterSpacing:4,textTransform:"uppercase",marginBottom:4}}>The Official</div>
-            <h1 style={{color:"#fff",fontSize:32,fontWeight:900,margin:0,fontFamily:"'Oswald','Arial Narrow',sans-serif"}}>NBA Team League <span style={{color:G}}>2026-27</span></h1>
+            <div style={{display:"inline-block",background:"#C9082A",color:"#fff",fontSize:10,fontWeight:800,letterSpacing:3,textTransform:"uppercase",padding:"3px 10px",borderRadius:3,marginBottom:6}}>The Official</div>
+            <h1 style={{color:"#fff",fontSize:36,fontWeight:700,margin:0,letterSpacing:1,textTransform:"uppercase",textShadow:"0 2px 0 rgba(0,0,0,0.35)",fontFamily:"'Oswald','Arial Narrow',sans-serif"}}>NBA Team League <span style={{color:"#fff",background:"#C9082A",padding:"0 10px",borderRadius:4,marginLeft:4}}>2026-27</span></h1>
           </div>
-          <div style={{color:G,fontSize:12,fontWeight:600,letterSpacing:1,textAlign:"right"}}>
+          <div style={{color:"#fff",fontSize:12,fontWeight:800,letterSpacing:1.5,textAlign:"right"}}>
             DEFENDING CHAMP: GAINZY 👑
-            <div style={{fontSize:10,color:"#ffffff80",marginTop:2}}>Est. 2024{" "}<span style={{display:"inline-block",width:8,height:8,borderRadius:"50%",background:live?GR:RD,marginLeft:6,animation:"pulse 2s infinite"}}/><span style={{color:live?"#4CAF50":RD,fontSize:9,fontWeight:700,marginLeft:4}}>{live?"LIVE":""}</span></div>
+            <div style={{fontSize:10,color:"#fff",opacity:.85,fontWeight:600,marginTop:2}}>Est. 2024{" "}<span style={{display:"inline-block",width:8,height:8,borderRadius:"50%",background:live?"#4ADE80":"#FF6B6B",marginLeft:6,animation:"pulse 2s infinite"}}/><span style={{color:live?"#4ADE80":"#FF6B6B",fontSize:9,fontWeight:800,marginLeft:4}}>{live?"LIVE":""}</span></div>
           </div>
         </div>
-        <div style={{marginTop:10,background:GR+"20",borderRadius:6,padding:"8px 16px",display:"flex",justifyContent:"center",alignItems:"center",gap:16,border:"1px solid "+GR+"40",flexWrap:"wrap"}}>
-          <span style={{display:"inline-block",width:8,height:8,borderRadius:"50%",background:GR,animation:"pulse 1.5s infinite"}}/>
-          <div style={{fontSize:11,color:GR,fontWeight:800,letterSpacing:2}}>2026-27 SEASON IS LIVE</div>
-          {(function(){var seasonStart=new Date("2026-10-20T00:00:00-04:00");var now=new Date();var day=Math.min(174,Math.max(1,Math.floor((now-seasonStart)/864e5)+1));return <div style={{fontSize:10,color:GY}}>Day {day} of 174</div>})()}
+        <div style={{marginTop:12,background:"#fff",borderRadius:6,padding:"8px 16px",display:"flex",justifyContent:"center",alignItems:"center",gap:16,borderLeft:"5px solid #C9082A",borderRight:"5px solid #C9082A",flexWrap:"wrap",position:"relative"}}>
+          <span style={{display:"inline-block",width:9,height:9,borderRadius:"50%",background:"#C9082A",animation:"pulse 1.5s infinite"}}/>
+          <div style={{fontSize:12,color:"#0B2A6B",fontWeight:800,letterSpacing:2}}>2026-27 SEASON IS LIVE</div>
+          {(function(){var seasonStart=new Date("2026-10-20T00:00:00-04:00");var now=new Date();var day=Math.min(174,Math.max(1,Math.floor((now-seasonStart)/864e5)+1));return <div style={{fontSize:11,color:"#C9082A",fontWeight:700}}>Day {day} of 174</div>})()}
         </div>
-        <div className="tabs-row" style={{display:"flex",gap:0,marginTop:10,borderBottom:"2px solid "+G+"33"}}>
-          {tabs.map(function(t){return <button key={t.id} onClick={function(){setTab(t.id)}} style={{background:tab===t.id?G:"transparent",color:tab===t.id?N:"#ffffff99",border:"none",padding:"8px 20px",fontSize:11,fontWeight:700,letterSpacing:1.5,textTransform:"uppercase",borderRadius:"6px 6px 0 0",fontFamily:"'Libre Franklin',sans-serif"}}>{t.l}</button>})}
+        <div className="tabs-row" style={{display:"flex",gap:4,marginTop:12,position:"relative"}}>
+          {tabs.map(function(t){return <button key={t.id} onClick={function(){setTab(t.id)}} style={{background:tab===t.id?"#fff":"transparent",color:tab===t.id?"#0B2A6B":"#fff",border:"none",borderTop:tab===t.id?"3px solid #C9082A":"3px solid transparent",padding:"9px 20px",fontSize:11,fontWeight:800,letterSpacing:1.5,textTransform:"uppercase",borderRadius:"6px 6px 0 0",fontFamily:"'Libre Franklin',sans-serif"}}>{t.l}</button>})}
         </div>
       </div>
 
@@ -399,9 +390,6 @@ function App(){
       <div style={{maxWidth:1100,margin:"16px auto",padding:"16px",background:"rgba(255,246,232,0.93)",borderRadius:14,boxShadow:"0 8px 30px rgba(40,18,6,0.35)",border:"2px solid #7a4e24"}}>
 
         {tab==="standings"&&<div>
-          <div className="prize-row" style={{display:"flex",gap:12,marginBottom:24,flexWrap:"wrap"}}>
-            {[["Reg Season","$150","$50 entry"],["NBA Cup","$75","$25 entry"],["NBA Finals","$75","$25 entry"]].map(function(x){return <div key={x[0]} className="glass" style={{flex:1,minWidth:180,borderRadius:10,padding:"16px 20px"}}><div style={{fontSize:11,color:GY,fontWeight:600,letterSpacing:1,textTransform:"uppercase"}}>{x[0]}</div><div style={{fontSize:28,fontWeight:900,color:N,fontFamily:"'Oswald','Arial Narrow',sans-serif",marginTop:4}}>{x[1]}</div><div style={{fontSize:11,color:GY,marginTop:2}}>{x[2]}</div></div>})}
-          </div>
 
           {/* SEASON PROGRESS BAR */}
           {(function(){
@@ -511,38 +499,12 @@ function App(){
             </div>
           </div>
 
-          {/* TRASH TALK */}
-          <div style={{marginTop:24,background:"#fff",borderRadius:12,overflow:"hidden",border:"1px solid #E5E5E5"}}>
-            <div style={{background:N,padding:"10px 20px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-              <span style={{color:"#fff",fontSize:12,fontWeight:700}}>TRASH TALK</span>
-              <span style={{color:G,fontSize:9}}>{chatMsgs.length} msgs</span>
-            </div>
-            <div ref={chatRef} style={{height:220,overflowY:"auto",padding:"10px 16px",background:"#FAFAFA"}}>
-              {chatMsgs.length===0&&<div style={{textAlign:"center",padding:30,color:GY,fontSize:12}}>No messages yet. Start the trash talk!</div>}
-              {chatMsgs.map(function(m,i){
-                var t=new Date(m.ts);
-                var time=t.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"});
-                var date=t.toLocaleDateString([],{month:"short",day:"numeric"});
-                return <div key={i} style={{marginBottom:10}}>
-                  <div style={{display:"flex",alignItems:"baseline",gap:8}}>
-                    <span style={{fontSize:13,fontWeight:700,color:N}}>{m.name}</span>
-                    <span style={{fontSize:9,color:"#C0C0C0"}}>{date} {time}</span>
-                  </div>
-                  <div style={{fontSize:12,color:GY,marginTop:2}}>{m.msg}</div>
-                </div>
-              })}
-            </div>
-            <div style={{padding:"10px 16px",borderTop:"1px solid #E5E5E5"}}>
-              {!chatName.trim()?
-                <div style={{display:"flex",gap:8}}>
-                  <input value={chatName} onChange={function(e){setChatName(e.target.value)}} placeholder="Enter your name to chat..." style={{flex:1,padding:"8px 12px",border:"1px solid #DDD",borderRadius:6,fontSize:12,fontFamily:"'Libre Franklin',sans-serif"}}/>
-                </div>:
-                <div style={{display:"flex",gap:8,alignItems:"center"}}>
-                  <span style={{fontSize:10,fontWeight:700,color:G}}>{chatName}</span>
-                  <input value={chatInput} onChange={function(e){setChatInput(e.target.value)}} onKeyDown={function(e){if(e.key==="Enter")sendChat()}} placeholder="Talk trash..." style={{flex:1,padding:"8px 12px",border:"1px solid #DDD",borderRadius:6,fontSize:12,fontFamily:"'Libre Franklin',sans-serif"}}/>
-                  <button onClick={sendChat} style={{background:G,color:N,border:"none",borderRadius:6,padding:"8px 16px",fontSize:11,fontWeight:700,fontFamily:"'Libre Franklin',sans-serif"}}>SEND</button>
-                </div>}
-            </div>
+          {/* PRIZES */}
+          <div style={{marginTop:24}}>
+            <div style={{fontSize:11,fontWeight:700,color:N,letterSpacing:1.5,marginBottom:8}}>PRIZE POOL - $300</div>
+          <div className="prize-row" style={{display:"flex",gap:12,marginBottom:0,flexWrap:"wrap"}}>
+            {[["Reg Season","$150","$50 entry"],["NBA Cup","$75","$25 entry"],["NBA Finals","$75","$25 entry"]].map(function(x){return <div key={x[0]} className="glass" style={{flex:1,minWidth:180,borderRadius:10,padding:"16px 20px"}}><div style={{fontSize:11,color:GY,fontWeight:600,letterSpacing:1,textTransform:"uppercase"}}>{x[0]}</div><div style={{fontSize:28,fontWeight:900,color:N,fontFamily:"'Oswald','Arial Narrow',sans-serif",marginTop:4}}>{x[1]}</div><div style={{fontSize:11,color:GY,marginTop:2}}>{x[2]}</div></div>})}
+          </div>
           </div>
         </div>}
 
@@ -714,116 +676,39 @@ function App(){
 
         {/* RULES TAB */}
         {tab==="rules"&&<div>
-          {/* HERO */}
-          <div style={{background:N,borderRadius:12,padding:"32px 24px",textAlign:"center",marginBottom:24,position:"relative",overflow:"hidden"}}>
-            <div style={{position:"absolute",top:0,right:0,width:300,height:"100%",background:"linear-gradient(135deg,transparent 30%,"+G+"10)",pointerEvents:"none"}}/>
-            <div style={{position:"relative"}}>
-              <div style={{fontSize:10,color:G,fontWeight:700,letterSpacing:4,marginBottom:8}}>OFFICIAL RULEBOOK</div>
-              <div style={{fontSize:26,fontWeight:900,color:"#fff",fontFamily:"'Oswald','Arial Narrow',sans-serif",marginBottom:6}}>NBA Team League 2026-27</div>
-              <div style={{fontSize:13,color:"#ffffff70"}}>Season 3 - Est. 2024 - 4 Managers - 7 Teams - 1 Champion</div>
-            </div>
-          </div>
-
-          {/* CORE PRINCIPLE */}
-          <div style={{background:LG,borderRadius:10,padding:"20px 24px",marginBottom:24,border:"1px solid "+G+"40",textAlign:"center"}}>
-            <div style={{fontSize:22,fontWeight:900,color:N,fontFamily:"'Oswald','Arial Narrow',sans-serif"}}>WINS ARE ALL THAT MATTER</div>
-            <div style={{fontSize:12,color:GY,marginTop:6}}>No points. No stats. Just wins. The manager with the most combined regular season wins across their 7 teams takes the crown and the $150.</div>
-          </div>
-
-          {/* RULES SECTIONS */}
-          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(320px, 1fr))",gap:16,marginBottom:24}}>
-            {[
-              {icon:"01",title:"THE GAME",items:[
-                "NBA Team League is a season-long competition where 4 managers draft real NBA teams and compete based on total regular season wins.",
-                "Each manager builds a portfolio of 7 NBA teams through a snake draft.",
-                "From Opening Night (October 20, 2026) through the final day of the regular season (April 11, 2027), every win your teams earn counts toward your total.",
-                "The manager with the highest combined win total is crowned NBA Team League Champion.",
-                "Now in its 3rd season. Established 2024."
-              ]},
-              {icon:"02",title:"THE DRAFT",items:[
-                "Format: Snake draft - 7 rounds, 4 managers, 28 teams drafted.",
-                "2 of 30 NBA teams go undrafted each season. For 2026-27 that is the Nets and Kings.",
-                "Draft order is determined by a one-time randomizer. Once set, the order is locked permanently.",
-                "Odd rounds (1, 3, 5, 7) follow the set order. Even rounds (2, 4, 6) reverse the order.",
-                "All picks are final. No trades. No drops. No substitutions."
-              ]},
-              {icon:"03",title:"SCORING & STANDINGS",items:[
-                "Only NBA regular season wins count toward the standings. Losses, win percentage, and playoff results have zero impact on the regular season race.",
-                "Each manager's 7 team wins are totaled and ranked against the other managers.",
-                "Standings sync automatically from ESPN throughout the season.",
-                "Weekly movement arrows track who is rising and falling in the standings.",
-                "Milestone badges are awarded automatically (300 Club, Sharpshooter, Clean Sweep, etc.)."
-              ]},
-              {icon:"04",title:"TIEBREAKER",items:[
-                "If two or more managers are tied in total wins at the end of the regular season, the tiebreaker goes to the manager whose single best team has the most wins.",
-                "Example: If Manager A and Manager B both have 290 wins, but Manager A's best team has 62 wins and Manager B's best team has 58 wins, Manager A wins."
-              ]},
-              {icon:"05",title:"ENTRY & PRIZES",items:[
-                "Entry fee: $100 per manager.",
-                "Breakdown: $50 regular season + $25 NBA Cup + $25 NBA Finals.",
-                "Total prize pool: $300.",
-                "Regular Season Champion: $150 (most total wins, winner take all).",
-                "NBA Cup (in-season champion): $75.",
-                "NBA Finals champion: $75.",
-                "Best Single Team: Bragging rights and the Sharpshooter badge."
-              ]},
-              {icon:"06",title:"NBA CUP & NBA FINALS",items:[
-                "The manager who drafted the Emirates NBA Cup 2026 champion wins the NBA Cup pool. The Cup final is December 11 at Hinkle Fieldhouse in Indianapolis.",
-                "The manager who drafted the 2027 NBA Finals champion wins the NBA Finals pool.",
-                "Each pool: $25 entry per manager, $75 winner-take-all.",
-                "No separate pick required. If your drafted team wins it all, you win automatically.",
-                "If either winner is one of the 2 undrafted teams, all participants are banned from NBA Team League forever. No exceptions. No appeals. Draft wisely."
-              ]},
-              {icon:"07",title:"COMMISSIONER",items:[
-                "The Commissioner manages the league, updates win/loss records if needed, and resolves any disputes.",
-                "Commissioner has admin access to edit records, undo picks, and save weekly snapshots.",
-                "All admin actions are password-protected.",
-                "Commissioner: Mike Rippe (@michaelrippe)"
-              ]},
-              {icon:"08",title:"LEAGUE HISTORY",items:[
-                "2025-26 Champion: Gainzy - 310 total wins.",
-                "2025-26 Runner-up: Gallup (G$) - 309 wins. Margin: 1 win.",
-                "2025-26 Third: Rippe - 303 wins. Fourth: Swaggy - 269 wins.",
-                "2025-26 NBA Cup: Knicks over Spurs (owner: G$).",
-                "2024-25 Champion: Rippe - 326 total wins.",
-                "The league has crowned a champion every season since 2024."
-              ]}
-            ].map(function(section){return <div key={section.title} style={{background:"#fff",borderRadius:12,overflow:"hidden",border:"1px solid #E5E5E5"}}>
-              <div style={{background:N,padding:"12px 20px",display:"flex",alignItems:"center",gap:12}}>
-                <span style={{color:G,fontSize:16,fontWeight:900,fontFamily:"'Oswald','Arial Narrow',sans-serif"}}>{section.icon}</span>
-                <span style={{color:"#fff",fontSize:12,fontWeight:700,letterSpacing:1}}>{section.title}</span>
-              </div>
-              <div style={{padding:"16px 20px"}}>
-                {section.items.map(function(item,i){return <div key={i} style={{fontSize:12,color:GY,lineHeight:1.7,marginBottom:6,paddingLeft:10,borderLeft:"2px solid "+(i===0?G:"transparent")}}>
-                  {item}
-                </div>})}
-              </div>
-            </div>})}
-          </div>
-
-          {/* KEY DATES */}
-          <div style={{background:"#fff",borderRadius:12,overflow:"hidden",border:"1px solid #E5E5E5",marginBottom:24}}>
-            <div style={{background:N,padding:"12px 20px"}}><span style={{color:"#fff",fontSize:12,fontWeight:700}}>KEY DATES - 2026-27 SEASON</span></div>
-            <div style={{padding:"16px 20px",display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(200px, 1fr))",gap:12}}>
+          <div style={{background:"#fff",borderRadius:12,overflow:"hidden",border:"1px solid #E5E5E5"}}>
+            <div style={{background:N,padding:"16px 24px",borderBottom:"4px solid #C9082A"}}><span style={{color:"#fff",fontSize:16,fontWeight:700,letterSpacing:1}}>OFFICIAL RULES</span></div>
+            <div style={{padding:"22px 28px"}}>
+              <div style={{fontSize:24,fontWeight:700,color:N,fontFamily:"'Oswald','Arial Narrow',sans-serif",marginBottom:14,letterSpacing:.5}}>WINS ARE ALL THAT MATTER</div>
               {[
-                {iso:"2026-10-20",date:"Oct 20",label:"Opening Night - BOS @ DET"},
-                {iso:"2026-10-30",date:"Oct 30",label:"NBA Cup Group Play Begins"},
-                {iso:"2026-12-11",date:"Dec 11",label:"NBA Cup Final - Indianapolis"},
-                {iso:"2027-02-21",date:"Feb 21",label:"All-Star Game - Phoenix"},
-                {iso:"2027-04-11",date:"Apr 11",label:"Regular Season Ends"},
-                {iso:"2027-06-30",date:"June",label:"NBA Finals",fixed:"UPCOMING"}
-              ].map(function(d0){var diff=Math.ceil((new Date(d0.iso+"T23:59:59")-new Date())/864e5);var d={date:d0.date,label:d0.label,status:d0.fixed&&diff>=0?d0.fixed:diff<0?"COMPLETE":diff===0?"TODAY":diff+(diff===1?" DAY":" DAYS")};return d}).map(function(d){return <div key={d.label} style={{display:"flex",alignItems:"center",gap:12,padding:"8px 0"}}>
-                <div style={{minWidth:50,fontSize:13,fontWeight:800,color:N}}>{d.date}</div>
-                <div style={{flex:1}}>
-                  <div style={{fontSize:12,fontWeight:600,color:N}}>{d.label}</div>
-                </div>
-                <span style={{fontSize:9,fontWeight:700,color:d.status==="COMPLETE"?GR:d.status==="UPCOMING"?GY:G,letterSpacing:1}}>{d.status}</span>
+              ["THE GAME","4 managers draft 7 NBA teams each. Most combined regular season wins across all 7 teams wins the league."],
+              ["DRAFT","Snake draft, 7 rounds, 28 of 30 NBA teams. 2026-27 order: Swaggy, Gallup, Gainzy, Rippe. Nets and Kings go undrafted."],
+              ["SCORING","Every regular season win counts as 1 win. Losses count for nothing. Season runs Oct 20 to Apr 11."],
+              ["TIEBREAKER","If tied on total wins, the manager whose single best team has the most wins takes it."],
+              ["REG SEASON POT","$50 buy-in. Most wins at season's end takes $150."],
+              ["NBA CUP SIDE BET","$25 buy-in. Own the NBA Cup champion (final Dec 11) and take the $75 pot."],
+              ["NBA FINALS SIDE BET","$25 buy-in. Own the NBA Finals champion and take the $75 pot."]
+              ].map(function(r){return <div key={r[0]} style={{marginBottom:14}}>
+                <div style={{fontSize:12,fontWeight:800,color:"#C9082A",letterSpacing:2}}>{r[0]}</div>
+                <div style={{fontSize:14,color:N,marginTop:2,lineHeight:1.5}}>{r[1]}</div>
               </div>})}
             </div>
           </div>
 
+          {/* VENMO */}
+          <div style={{marginTop:12,background:N,borderRadius:12,padding:"14px 20px",display:"flex",justifyContent:"space-between",alignItems:"center",gap:12,flexWrap:"wrap"}}>
+            <div>
+              <div style={{fontSize:10,color:G,fontWeight:700,letterSpacing:3}}>SUPPORT THE LEAGUE</div>
+              <div style={{fontSize:15,fontWeight:700,color:"#fff",marginTop:2}}>Buy the Commissioner a Coffee <span style={{fontSize:10,color:"#ffffff70",fontWeight:500}}>@michaelrippe</span></div>
+            </div>
+            <a href="https://venmo.com/michaelrippe?txn=pay&amount=1&note=NBA%20Team%20League%20Support" target="_blank" rel="noopener noreferrer" style={{display:"inline-flex",alignItems:"center",gap:8,background:"#008CFF",color:"#fff",textDecoration:"none",padding:"10px 28px",borderRadius:24,fontSize:13,fontWeight:700,fontFamily:"'Libre Franklin',sans-serif"}}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M19.5 3.5c.8 1.1 1.2 2.3 1.2 3.8 0 4.7-4 10.8-7.2 15.1H6.8L4 3.8l5.4-.5 1.6 12.8c1.5-2.4 3.3-6.2 3.3-8.8 0-1.3-.2-2.2-.6-3l5.8-.8z"/></svg>
+              $1 via Venmo
+            </a>
+          </div>
+
           {/* EXPANDING - SIGN UP */}
-          <div style={{marginTop:24,background:"#fff",borderRadius:12,overflow:"hidden",border:"1px solid #E5E5E5",marginBottom:24}}>
+          <div style={{marginTop:12,background:"#fff",borderRadius:12,overflow:"hidden",border:"1px solid #E5E5E5"}}>
             <div style={{background:N,padding:"12px 20px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
               <span style={{color:"#fff",fontSize:12,fontWeight:700}}>COMING SOON - MORE LEAGUES</span>
               <span style={{color:G,fontSize:9}}>SIGN UP FOR EARLY ACCESS</span>
@@ -850,17 +735,6 @@ function App(){
                 <button onClick={submitSignup} disabled={!signName.trim()||!signEmail.trim()} style={{background:signName.trim()&&signEmail.trim()?G:MG,color:signName.trim()&&signEmail.trim()?N:"#999",border:"none",borderRadius:6,padding:"8px 20px",fontSize:11,fontWeight:700,fontFamily:"'Libre Franklin',sans-serif"}}>SIGN UP</button>
               </div>}
             </div>
-          </div>
-
-          {/* SUPPORT THE LEAGUE */}
-          <div style={{background:N,borderRadius:12,padding:"24px",textAlign:"center"}}>
-            <div style={{fontSize:11,color:G,fontWeight:700,letterSpacing:3,marginBottom:6}}>SUPPORT THE LEAGUE</div>
-            <div style={{fontSize:18,fontWeight:900,color:"#fff",fontFamily:"'Oswald','Arial Narrow',sans-serif",marginBottom:6}}>Buy the Commissioner a Coffee</div>
-            <a href="https://venmo.com/michaelrippe?txn=pay&amount=1&note=NBA%20Team%20League%20Support" target="_blank" rel="noopener noreferrer" style={{display:"inline-flex",alignItems:"center",gap:8,background:"#008CFF",color:"#fff",textDecoration:"none",padding:"10px 28px",borderRadius:24,fontSize:13,fontWeight:700,fontFamily:"'Libre Franklin',sans-serif"}}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M19.5 3.5c.8 1.1 1.2 2.3 1.2 3.8 0 4.7-4 10.8-7.2 15.1H6.8L4 3.8l5.4-.5 1.6 12.8c1.5-2.4 3.3-6.2 3.3-8.8 0-1.3-.2-2.2-.6-3l5.8-.8z"/></svg>
-              $1 via Venmo
-            </a>
-            <div style={{fontSize:9,color:"#ffffff40",marginTop:8}}>@michaelrippe</div>
           </div>
         </div>}
 
