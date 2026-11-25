@@ -146,6 +146,23 @@ h1{font-size:22px!important}
 /* 2026-27 regular season. ESPN's season year is the year the season ends. */
 var ESPN_URL="https://site.api.espn.com/apis/v2/sports/basketball/nba/standings?season=2027&seasontype=2";
 var FB_URL="https://mlbtl26-default-rtdb.firebaseio.com/nbatl26/game.json";
+/* Public web config for Firebase Auth only. Replace ADMIN_UID with Michael's uid from Authentication → Users. */
+var FB_AUTH={apiKey:"AIzaSyC8UvEYET3uXzDNHBuOz_PoQj-pLUFEHDs",authDomain:"mlbtl26.firebaseapp.com",projectId:"mlbtl26"};
+var ADMIN_UID="MICHAEL_UID_PLACEHOLDER";
+var AUTH_FLAG="nbatl26-google-admin";
+var authLoader=null;
+function loadAuth(){
+ if(authLoader)return authLoader;
+ authLoader=Promise.all([
+  import("https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js"),
+  import("https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js")
+ ]).then(function(mods){
+  var app=mods[0].initializeApp(FB_AUTH);
+  var auth=mods[1].getAuth(app);
+  return {auth:auth,mod:mods[1]};
+ }).catch(function(err){authLoader=null;throw err});
+ return authLoader;
+}
 var CACHE_KEY="nbatl26-2027-standings-v1";
 var CUP_CACHE_KEY="nbatl26-2027-cup-v1";
 var RANK_KEY="nbatl26-rank-snap-v1";
@@ -507,10 +524,12 @@ function App(){
  function setTab(t){setTabState(t);window.location.hash=t}
  var viewState=React.useState("wins");
  var view=viewState[0],setView=viewState[1];
- var admState=React.useState(false);
- var adm=admState[0],setAdm=admState[1];
- var pwdState=React.useState("");
- var pwd=pwdState[0],setPwd=pwdState[1];
+ var authState=React.useState(null);
+ var authUser=authState[0],setAuthUser=authState[1];
+ var authBusyState=React.useState(false);
+ var authBusy=authBusyState[0],setAuthBusy=authBusyState[1];
+ var authNoteState=React.useState("");
+ var authNote=authNoteState[0],setAuthNote=authNoteState[1];
  var syncState=React.useState(false);
  var syncing=syncState[0],setSyncing=syncState[1];
  var shareState=React.useState("idle");
@@ -542,7 +561,22 @@ function App(){
  var trustedRef=React.useRef(!!boot);
  var rcRef=React.useRef(boot?boot.records:null);
  var atRef=React.useRef(boot?boot.at:"");
- var isAdm=pwd==="rippe26";
+ var isAdmin=!!(authUser&&authUser.uid===ADMIN_UID);
+
+ React.useEffect(function(){
+  var remember=false;
+  try{remember=localStorage.getItem(AUTH_FLAG)==="1"}catch(e){}
+  if(!remember)return;
+  var alive=true,unsub=function(){};
+  loadAuth().then(function(api){
+   unsub=api.mod.onAuthStateChanged(api.auth,function(user){
+    if(!alive)return;
+    if(!user){try{localStorage.removeItem(AUTH_FLAG)}catch(e){} setAuthUser(null);return}
+    setAuthUser({uid:user.uid,email:user.email||"",name:user.displayName||""});
+   });
+  }).catch(function(){});
+  return function(){alive=false;unsub()};
+ },[]);
 
  React.useEffect(function(){
   var alive=true;
@@ -790,7 +824,30 @@ function App(){
    .then(function(){setDShare("idle")}).catch(function(){setDShare("error")});
  }
 
+ function signInGoogle(){
+  setAuthNote("");
+  setAuthBusy(true);
+  loadAuth().then(function(api){
+   var provider=new api.mod.GoogleAuthProvider();
+   return api.mod.signInWithPopup(api.auth,provider);
+  }).then(function(result){
+   var user=result&&result.user;
+   if(!user)return;
+   try{localStorage.setItem(AUTH_FLAG,"1")}catch(e){}
+   setAuthUser({uid:user.uid,email:user.email||"",name:user.displayName||""});
+  }).catch(function(err){
+   var code=err&&err.code;
+   if(code!=="auth/popup-closed-by-user"&&code!=="auth/cancelled-popup-request")setAuthNote("Google sign-in didn't finish.");
+  }).then(function(){setAuthBusy(false)});
+ }
+ function signOutGoogle(){
+  loadAuth().then(function(api){return api.mod.signOut(api.auth)}).then(function(){
+   try{localStorage.removeItem(AUTH_FLAG)}catch(e){}
+   setAuthUser(null);
+  }).catch(function(){});
+ }
  function push(up){
+  if(!isAdmin)return;
   setRoster(function(prev){
    var next=Object.assign({},prev||defData());
    Object.keys(up).forEach(function(k){next[k]=up[k]});
@@ -801,10 +858,17 @@ function App(){
   if(safe.draftPicks)safe.draftPicks=safe.draftPicks.map(function(a){return a.length?a:["_"]});
   if(safe.managers)safe.managers=safe.managers.map(function(m){return {name:m.name,teams:m.teams.length?m.teams:["_"]}});
   if(safe.draftOrder===null)safe.draftOrder="none";
-  fetch(FB_URL,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify(safe)}).catch(function(){});
+  loadAuth().then(function(api){
+   var user=api.auth.currentUser;
+   if(!user||user.uid!==ADMIN_UID)return;
+   return user.getIdToken();
+  }).then(function(token){
+   if(!token)return;
+   return fetch(FB_URL+"?auth="+encodeURIComponent(token),{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify(safe)});
+  }).catch(function(){});
  }
  function doPick(team){
-  if(cur<0||dlk||taken.indexOf(team)>=0)return;
+  if(!isAdmin||cur<0||dlk||taken.indexOf(team)>=0)return;
   var np=dpk.map(function(a){return [].concat(a)});np[cur].push(team);
   var nP=dp+1,nR=dr;if(nP>=4){nP=0;nR++}
   var up={draftPicks:np,draftPick:nP,draftRound:nR,namesLocked:true};
@@ -812,12 +876,12 @@ function App(){
   push(up);
  }
  function startDraft(){
-  if(dlk)return;
+  if(!isAdmin||dlk)return;
   push({draftRound:0,draftPick:0,draftPicks:[[],[],[],[]],draftManagers:mg.map(function(m,i){return m.name||MNAMES[i]||""}),namesLocked:false,draftOrder:null,draftMode:true,draftLocked:false});
   setShuffled(null);setAnim(false);setTab("draft");
  }
  function doRandom(){
-  if(dor!==null||!named)return;
+  if(!isAdmin||dor!==null||!named)return;
   setAnim(true);var ct=0;
   var si=setInterval(function(){
    var t=[0,1,2,3];
@@ -827,7 +891,7 @@ function App(){
   },120);
  }
  function undo(){
-  if(!isAdm)return;
+  if(!isAdmin)return;
   var pP=dp-1,pR=dr;if(pP<0){pP=3;pR--}if(pR<0)return;
   var who=snk[pR][pP];
   var np=dpk.map(function(a){return [].concat(a)});
@@ -835,7 +899,7 @@ function App(){
   np[who].pop();
   push({draftPicks:np,draftPick:pP,draftRound:pR,draftLocked:false,draftMode:true});
  }
- function setDMgr(i,v){if(nlk)return;var nm=[].concat(dmg);nm[i]=v;push({draftManagers:nm})}
+ function setDMgr(i,v){if(!isAdmin||nlk)return;var nm=[].concat(dmg);nm[i]=v;push({draftManagers:nm})}
 
  function submitSignup(){
   if(!sign.name.trim()||!sign.email.trim())return;
@@ -1108,17 +1172,16 @@ function App(){
    </div>`:null}
 
    ${tab==="draft"?html`<div>
-    <div style=${{display:"flex",justifyContent:"flex-end",marginBottom:8}}>
-     ${!adm?html`<button type="button" className="sync-btn" onClick=${function(){setAdm(true)}}>Admin</button>`:html`<div style=${{display:"flex",alignItems:"center",gap:10,padding:"10px 16px",background:"#fff",borderRadius:8,border:"1px solid "+RD,flexWrap:"wrap"}}>
-      <span className="fine" style=${{fontWeight:800,color:RD}}>ADMIN</span>
-      ${!isAdm?html`<input type="password" placeholder="Password" aria-label="Admin password" value=${pwd} onChange=${function(e){setPwd(e.target.value)}} style=${{padding:"8px 10px",border:"1px solid #DDD",borderRadius:6,width:140}} />`:html`<button type="button" className="retry-btn" onClick=${undo}>UNDO PICK</button>`}
-      <button type="button" onClick=${function(){setAdm(false);setPwd("")}} style=${{background:"transparent",border:"none",fontSize:16,color:GY,minWidth:44,minHeight:44}}>Close</button>
-     </div>`}
+    <div style=${{display:"flex",justifyContent:"flex-end",alignItems:"center",gap:8,marginBottom:8,flexWrap:"wrap"}}>
+     ${!authUser?html`<button type="button" className="sync-btn" onClick=${signInGoogle} disabled=${authBusy}>${authBusy?"SIGNING IN…":"Sign in with Google"}</button>`:html`<span className="fine" style=${{fontWeight:700}}>${isAdmin?"Admin":"Signed in"} · ${authUser.email||authUser.name||"Google"}</span>`}
+     ${isAdmin?html`<button type="button" className="retry-btn" onClick=${undo}>UNDO PICK</button>`:null}
+     ${authUser?html`<button type="button" className="sync-btn" onClick=${signOutGoogle}>Sign out</button>`:null}
+     ${authNote?html`<span className="fine" style=${{color:RD}}>${authNote}</span>`:null}
     </div>
     ${!dm&&!dlk?html`<div style=${{textAlign:"center",padding:40}}>
      <div style=${{fontSize:18,fontWeight:800,color:N,marginBottom:8}}>Ready to draft for 2026-27?</div>
      <div className="fine" style=${{color:GY,marginBottom:16}}>Snake format · 7 rounds · 4 managers · 28 picks</div>
-     <button type="button" className="share-btn" onClick=${startDraft}>START DRAFT</button>
+     ${isAdmin?html`<button type="button" className="share-btn" onClick=${startDraft}>START DRAFT</button>`:html`<div className="fine">The commissioner signs in with Google to run the draft.</div>`}
     </div>`:dlk?html`<div>
      <div ref=${draftResultsRef} className="card">
       <${Hd} r="Snake · 7 rounds">2026-27 DRAFT RESULTS <span className="badge" style=${{background:RD,color:ON,marginLeft:8,padding:"2px 8px",borderRadius:10}}>LOCKED</span></${Hd}>
@@ -1162,7 +1225,7 @@ function App(){
      </div>
      ${!dor?html`<div style=${{textAlign:"center",padding:24,background:"#fff",borderRadius:12,border:"1px solid #E5E5E5",marginBottom:12}}>
       ${shuffled?html`<div style=${{display:"flex",justifyContent:"center",gap:10,flexWrap:"wrap",marginBottom:12}}>${shuffled.map(function(mIdx,pos){return html`<div key=${pos} style=${{background:N,color:ON,borderRadius:8,padding:"10px 12px",minWidth:88}}><div style=${{fontFamily:"Oswald,sans-serif",fontSize:22,color:GA}}>#${pos+1}</div><div className="fine">${dmg[mIdx]||"Mgr"}</div></div>`})}</div>`:html`<div className="fine" style=${{marginBottom:8}}>Enter all 4 names, then randomize once.</div>`}
-      <button type="button" className="share-btn" disabled=${anim||!named} onClick=${doRandom}>${anim?"RANDOMIZING…":shuffled?"ORDER LOCKED":"RANDOMIZE DRAFT ORDER"}</button>
+      <button type="button" className="share-btn" disabled=${!isAdmin||anim||!named} onClick=${doRandom}>${anim?"RANDOMIZING…":shuffled?"ORDER LOCKED":"RANDOMIZE DRAFT ORDER"}</button>
      </div>`:html`<div style=${{background:N,borderRadius:8,padding:"10px 16px",marginBottom:10,display:"flex",gap:14,flexWrap:"wrap",alignItems:"center"}}>
       <span className="fine" style=${{color:G,fontWeight:800}}>DRAFT ORDER</span>
       ${dor.map(function(mIdx,pos){return html`<span key=${pos} style=${{color:ON,fontWeight:700}}>${pos+1}. ${dmg[mIdx]}</span>`})}
@@ -1181,7 +1244,7 @@ function App(){
        ${dor.map(function(mIdx,pos){var tp=(dpk[mIdx]||[])[rd]||"";return html`<div className="draft-pick" key=${mIdx}><div className="meta"><span>${dmg[mIdx]||"Mgr"}</span><span>#${rd*4+(rd%2===0?pos+1:4-pos)}</span></div><div>${tp?html`<${Tm} name=${tp} sz=${16} />`:html`<span className="fine">—</span>`}</div></div>`})}
       </div></section>`})}</div>
      </div>`:null}
-     ${dor&&dr<7?html`<div><div className="fine" style=${{fontWeight:800,marginBottom:8}}>AVAILABLE (${avail.length})</div><div style=${{display:"flex",flexWrap:"wrap",gap:6}}>${avail.map(function(t){return html`<button type="button" key=${t} onClick=${function(){doPick(t)}} style=${{background:"#fff",border:"1px solid #DDD",borderRadius:6,padding:"8px 12px",minHeight:44,fontWeight:600}}><${Tm} name=${t} sz=${14} /></button>`})}</div></div>`:null}
+     ${dor&&dr<7&&isAdmin?html`<div><div className="fine" style=${{fontWeight:800,marginBottom:8}}>AVAILABLE (${avail.length})</div><div style=${{display:"flex",flexWrap:"wrap",gap:6}}>${avail.map(function(t){return html`<button type="button" key=${t} onClick=${function(){doPick(t)}} style=${{background:"#fff",border:"1px solid #DDD",borderRadius:6,padding:"8px 12px",minHeight:44,fontWeight:600}}><${Tm} name=${t} sz=${14} /></button>`})}</div></div>`:null}
      ${dr>=7?html`<div style=${{textAlign:"center",padding:16,background:LG,borderRadius:10}}><div style=${{fontWeight:800}}>Draft complete. Rosters are locked.</div><div className="fine" style=${{marginTop:6}}>Undrafted: ${undrafted.join(", ")||"None"}</div></div>`:null}
     </div>`}
    </div>`:null}
