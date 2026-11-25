@@ -49,6 +49,7 @@ button{cursor:pointer;font-family:inherit}
 button:active{transform:scale(0.97)}
 input,select{font-family:inherit;font-size:16px}
 img{max-width:100%;height:auto}
+img.team-logo{max-width:none;object-fit:contain;flex:none;display:block}
 table{border-collapse:collapse}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
@@ -76,6 +77,8 @@ table{border-collapse:collapse}
 .ticker-wrap{overflow:hidden;width:100%;background:var(--header);border-bottom:3px solid var(--on-dark-accent);padding:8px 0;position:relative;color:var(--on-dark);-webkit-mask-image:linear-gradient(90deg,transparent,#000 28px,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,transparent,#000 28px,#000 calc(100% - 28px),transparent)}
 .ticker-wrap:hover .ticker-track,.ticker-wrap:focus-within .ticker-track,.ticker-wrap.is-paused .ticker-track{animation-play-state:paused}
 .ticker-track{display:flex;gap:32px;white-space:nowrap;animation:tickerScroll 80s linear infinite;width:max-content}
+.ticker-game{display:inline-flex;align-items:center;gap:6px;color:var(--on-dark);font-weight:700}
+.ticker-score{font-weight:800;border-radius:4px;padding:0 5px;line-height:1.4}
 .ticker-item{color:var(--on-dark);font-weight:700}
 .ticker-item.live{color:var(--live)}
 .tabs-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:12px;position:relative}
@@ -154,10 +157,17 @@ var CUP_FINAL="Dec 11, 2026";
 var CUP_DATES=["20261030","20261106","20261113","20261120","20261124","20261125","20261127","20261204","20261205","20261207","20261208","20261209","20261211","20261212"];
 var ALL_TEAMS=["76ers","Blazers","Bucks","Bulls","Cavaliers","Celtics","Clippers","Grizzlies","Hawks","Heat","Hornets","Jazz","Kings","Knicks","Lakers","Magic","Mavericks","Nets","Nuggets","Pacers","Pelicans","Pistons","Raptors","Rockets","Spurs","Suns","Thunder","Timberwolves","Warriors","Wizards"];
 var MNAMES=["Swaggy","Gallup","Gainzy","Rippe"];
-var MGR_COLORS={"Swaggy":"#DC2626","Gallup":"#2563EB","Gainzy":"#059669","Rippe":"#7C3AED"};
-var CRESTS={"Swaggy":"SW","Gallup":"GA","Gainzy":"GZ","Rippe":"RP"};
+/* Fixed manager identity. Text colors are the AA pair on the cream sheet; fill/ink are the crest and ticker chip. */
+var MGR={
+ Gallup:{letter:"G",fill:"#000000",ink:"#A5ACAF",text:"#000000"},
+ Rippe:{letter:"R",fill:"#C4B5E8",ink:"#1A1408",text:"#6B4FB3"},
+ Gainzy:{letter:"S",fill:"#D3BC8D",ink:"#1A1408",text:"#1A1408"},
+ Swaggy:{letter:"T",fill:"#FB4F14",ink:"#000000",text:"#B33A0C"}
+};
+function mgrOf(name){return MGR[name]||null}
+function mgrText(name){var m=mgrOf(name);return m?m.text:"var(--muted)"}
+function mgrFill(name){var m=mgrOf(name);return m?m.fill:"var(--muted)"}
 var TEAM_COLORS={"Hawks":"#E03A3E","Celtics":"#007A33","Nets":"#444444","Hornets":"#1D1160","Bulls":"#CE1141","Cavaliers":"#860038","Mavericks":"#00538C","Nuggets":"#0E2240","Pistons":"#C8102E","Warriors":"#1D428A","Rockets":"#CE1141","Pacers":"#002D62","Clippers":"#C8102E","Lakers":"#552583","Grizzlies":"#5D76A9","Heat":"#98002E","Bucks":"#00471B","Timberwolves":"#236192","Pelicans":"#0C2340","Knicks":"#F58426","Thunder":"#007AC1","Magic":"#0077C0","76ers":"#006BB6","Suns":"#E56020","Blazers":"#E03A3E","Kings":"#5A2D81","Spurs":"#8A8D8F","Raptors":"#CE1141","Jazz":"#002B5C","Wizards":"#002B5C"};
-var LOGOS={"Hawks":"https://a.espncdn.com/i/teamlogos/nba/500/atl.png","Celtics":"https://a.espncdn.com/i/teamlogos/nba/500/bos.png","Nets":"https://a.espncdn.com/i/teamlogos/nba/500/bkn.png","Hornets":"https://a.espncdn.com/i/teamlogos/nba/500/cha.png","Bulls":"https://a.espncdn.com/i/teamlogos/nba/500/chi.png","Cavaliers":"https://a.espncdn.com/i/teamlogos/nba/500/cle.png","Mavericks":"https://a.espncdn.com/i/teamlogos/nba/500/dal.png","Nuggets":"https://a.espncdn.com/i/teamlogos/nba/500/den.png","Pistons":"https://a.espncdn.com/i/teamlogos/nba/500/det.png","Warriors":"https://a.espncdn.com/i/teamlogos/nba/500/gs.png","Rockets":"https://a.espncdn.com/i/teamlogos/nba/500/hou.png","Pacers":"https://a.espncdn.com/i/teamlogos/nba/500/ind.png","Clippers":"https://a.espncdn.com/i/teamlogos/nba/500/lac.png","Lakers":"https://a.espncdn.com/i/teamlogos/nba/500/lal.png","Grizzlies":"https://a.espncdn.com/i/teamlogos/nba/500/mem.png","Heat":"https://a.espncdn.com/i/teamlogos/nba/500/mia.png","Bucks":"https://a.espncdn.com/i/teamlogos/nba/500/mil.png","Timberwolves":"https://a.espncdn.com/i/teamlogos/nba/500/min.png","Pelicans":"https://a.espncdn.com/i/teamlogos/nba/500/no.png","Knicks":"https://a.espncdn.com/i/teamlogos/nba/500/ny.png","Thunder":"https://a.espncdn.com/i/teamlogos/nba/500/okc.png","Magic":"https://a.espncdn.com/i/teamlogos/nba/500/orl.png","76ers":"https://a.espncdn.com/i/teamlogos/nba/500/phi.png","Suns":"https://a.espncdn.com/i/teamlogos/nba/500/phx.png","Blazers":"https://a.espncdn.com/i/teamlogos/nba/500/por.png","Kings":"https://a.espncdn.com/i/teamlogos/nba/500/sac.png","Spurs":"https://a.espncdn.com/i/teamlogos/nba/500/sa.png","Raptors":"https://a.espncdn.com/i/teamlogos/nba/500/tor.png","Jazz":"https://a.espncdn.com/i/teamlogos/nba/500/utah.png","Wizards":"https://a.espncdn.com/i/teamlogos/nba/500/wsh.png"};
 var ABBR={"Hawks":"ATL","Celtics":"BOS","Nets":"BKN","Hornets":"CHA","Bulls":"CHI","Cavaliers":"CLE","Mavericks":"DAL","Nuggets":"DEN","Pistons":"DET","Warriors":"GS","Rockets":"HOU","Pacers":"IND","Clippers":"LAC","Lakers":"LAL","Grizzlies":"MEM","Heat":"MIA","Bucks":"MIL","Timberwolves":"MIN","Pelicans":"NO","Knicks":"NY","Thunder":"OKC","Magic":"ORL","76ers":"PHI","Suns":"PHX","Blazers":"POR","Kings":"SAC","Spurs":"SA","Raptors":"TOR","Jazz":"UTAH","Wizards":"WSH"};
 var BY_ABBR={};
 Object.keys(ABBR).forEach(function(k){BY_ABBR[ABBR[k]]=k});
@@ -257,6 +267,7 @@ function parseStandings(data){
   var stk=stats.streak?String(stats.streak.displayValue||""):"";
   var l10=stats["Last Ten Games"]?String(stats["Last Ten Games"].displayValue||""):"";
   records[name]={w:num("wins"),l:num("losses"),stk:/^[WL]\d+$/.test(stk)?stk:"",l10:/^\d+-\d+$/.test(l10)?l10:""};
+  noteLogo(name,tm);
  });
  return Object.keys(records).length>=30?records:null;
 }
@@ -288,6 +299,24 @@ function noteMovement(ranks){
  if(JSON.stringify(snap.ranks)!==JSON.stringify(ranks)){snap.ranks=ranks;writeJSON(RANK_KEY,snap)}
  return snap.prev||null;
 }
+var FEED_LOGOS={};
+function feedLogo(team){
+ if(!team)return "";
+ if(typeof team.logo==="string"&&team.logo)return team.logo;
+ if(team.logos&&team.logos[0]&&team.logos[0].href)return team.logos[0].href;
+ return "";
+}
+function combinerLogo(nameOrAbbr){
+ var ab=ABBR[nameOrAbbr]||nameOrAbbr||"";
+ ab=String(ab).toLowerCase();
+ if(!ab)return "";
+ return "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nba/500/"+ab+".png&w=40&h=40";
+}
+function noteLogo(name, team){
+ var href=feedLogo(team);
+ if(name&&href)FEED_LOGOS[name]=href;
+}
+function logoFor(name){return FEED_LOGOS[name]||combinerLogo(name)}
 function scoreOf(raw){
  if(raw==null)return 0;
  if(typeof raw==="object")return parseFloat(raw.value!=null?raw.value:raw.displayValue)||0;
@@ -308,6 +337,7 @@ function parseCupPayloads(payloads){
     var abbr=((t.team&&t.team.abbreviation)||"").toUpperCase();
     var name=BY_ABBR[abbr]||"";
     if(!name&&/tbd/i.test((t.team&&(t.team.displayName||t.team.name))||""))name="";
+    if(name)noteLogo(name,t.team);
     return {name:name,abbr:abbr,score:scoreOf(t.score),home:t.homeAway==="home",winner:!!t.winner};
    });
    var kind="group";
@@ -423,22 +453,26 @@ function saveCanvas(canvas, filename, title){
 
 var html=htm.bind(React.createElement);
 function Crest(p){
- var color=MGR_COLORS[p.name]||GY;
- var letters=CRESTS[p.name]||"?";
+ var m=mgrOf(p.name)||{letter:"?",fill:"var(--muted)",ink:"var(--on-dark)"};
  var sz=p.sz||28;
+ var letterSize=Math.max(11,Math.round(sz*0.5));
  return html`<svg className="crest" width=${sz} height=${Math.round(sz*1.15)} viewBox="0 0 40 46" role="img" aria-label=${p.name+" crest"}>
-  <path d="M20 1.5 36.5 8.2V22.5C36.5 33.2 20 44.5 20 44.5S3.5 33.2 3.5 22.5V8.2Z" fill=${color} />
-  <path d="M20 4.2 33.8 9.6V22.2C33.8 31.2 20 41.2 20 41.2S6.2 31.2 6.2 22.2V9.6Z" fill="none" stroke="rgba(255,255,255,.7)" strokeWidth="1.2" />
-  <text x="20" y="27" textAnchor="middle" fontFamily="Oswald, Arial Narrow, sans-serif" fontSize="12" fontWeight="700" fill="#fff">${letters}</text>
+  <path d="M20 1.5 36.5 8.2V22.5C36.5 33.2 20 44.5 20 44.5S3.5 33.2 3.5 22.5V8.2Z" fill=${m.fill} />
+  <path d="M20 4.2 33.8 9.6V22.2C33.8 31.2 20 41.2 20 41.2S6.2 31.2 6.2 22.2V9.6Z" fill="none" stroke=${m.ink} strokeWidth="1.2" />
+  <text x="20" y="28" textAnchor="middle" fontFamily="Oswald, Arial Narrow, sans-serif" fontSize=${letterSize} fontWeight="700" fill=${m.ink}>${m.letter}</text>
  </svg>`;
 }
-function Tm(p){
+function Logo(p){
  var pair=React.useState(false);var err=pair[0],setErr=pair[1];
  var sz=p.sz||16;var name=p.name||"";
- return html`<span className="tm">
-  ${(!err&&LOGOS[name])?html`<img src=${LOGOS[name]} alt="" width=${sz} height=${sz} crossOrigin="anonymous" style=${{width:sz,height:sz,objectFit:"contain"}} onError=${function(){setErr(true)}} />`:html`<span className="logo-fallback" style=${{width:sz,height:sz,fontSize:Math.max(10,Math.round(sz*0.38))}}>${ABBR[name]||"?"}</span>`}
-  <span>${name}</span>
- </span>`;
+ var src=p.src||logoFor(name);
+ React.useEffect(function(){setErr(false)},[src]);
+ if(err||!src)return html`<span className="logo-fallback" role="img" aria-label=${name||"Team"} style=${{width:sz,height:sz,fontSize:Math.max(10,Math.round(sz*0.38))}}>${ABBR[name]||"?"}</span>`;
+ return html`<img className="team-logo" src=${src} alt=${name} width=${sz} height=${sz} loading="lazy" decoding="async" style=${{width:sz,height:sz}} onError=${function(){setErr(true)}} />`;
+}
+function Tm(p){
+ var sz=p.sz||16;var name=p.name||"";
+ return html`<span className="tm"><${Logo} name=${name} sz=${sz} src=${p.src} />${p.hideName?null:html`<span>${name}</span>`}</span>`;
 }
 function Stk(p){
  if(!p.v)return null;
@@ -593,12 +627,20 @@ function App(){
    fetch("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates="+today)
     .then(function(r){return r.json()})
     .then(function(data){
+     function side(c){
+      var team=c&&c.team||{};
+      var abbr=(team.abbreviation||"").toUpperCase();
+      var name=BY_ABBR[abbr]||team.shortDisplayName||team.displayName||abbr;
+      if(BY_ABBR[abbr])noteLogo(BY_ABBR[abbr],team);
+      return {name:name,logo:feedLogo(team)||combinerLogo(abbr||name),score:c?scoreOf(c.score):""};
+     }
      var scores=(data&&data.events||[]).map(function(ev){
       var c=ev.competitions&&ev.competitions[0];if(!c)return null;
       var away=(c.competitors||[]).filter(function(t){return t.homeAway==="away"})[0];
       var home=(c.competitors||[]).filter(function(t){return t.homeAway==="home"})[0];
       var st=ev.status&&ev.status.type?ev.status.type.shortDetail:"";
-      return {away:away&&away.team?away.team.shortDisplayName:"",awayScore:away?scoreOf(away.score):"",home:home&&home.team?home.team.shortDisplayName:"",homeScore:home?scoreOf(home.score):"",status:st,live:!!(ev.status&&ev.status.type&&ev.status.type.state==="in")};
+      var a=side(away),h=side(home);
+      return {awayName:a.name,awayLogo:a.logo,awayScore:a.score,homeName:h.name,homeLogo:h.logo,homeScore:h.score,status:st,live:!!(ev.status&&ev.status.type&&ev.status.type.state==="in")};
      }).filter(Boolean);
      setTicker(scores);
     }).catch(function(){});
@@ -872,10 +914,22 @@ function App(){
 
   ${ticker.length?html`<div className=${"ticker-wrap"+(tickPaused?" is-paused":"")} onPointerDown=${function(e){if(e.pointerType==="touch")setTickPaused(true)}} onPointerUp=${function(e){if(e.pointerType==="touch")setTickPaused(false)}} onPointerCancel=${function(){setTickPaused(false)}} onPointerLeave=${function(e){if(e.pointerType==="touch")setTickPaused(false)}}>
    <div className="ticker-track" ref=${tickTrack}>
-   ${(reduceMotion?ticker:[].concat(ticker,ticker)).map(function(g,i){return html`<span key=${i} className=${"fine ticker-item"+(g.live?" live":"")}>
-    ${g.away||""} <span style=${{fontWeight:800}}>${g.awayScore}</span> – <span style=${{fontWeight:800}}>${g.homeScore}</span> ${g.home||""}
-    <span className="badge" style=${{color:"inherit",marginLeft:6}}>${g.status||""}</span>
-   </span>`})}
+   ${(reduceMotion?ticker:[].concat(ticker,ticker)).map(function(g,i){
+    function mark(teamName){
+     var m=mgrOf(ownerOf(teamName));
+     if(!m)return {fontWeight:800};
+     return {fontWeight:800,background:m.fill,color:m.ink,borderRadius:4,padding:"0 5px",boxShadow:"inset 0 0 0 1px "+m.ink};
+    }
+    var label=g.awayName+" "+g.awayScore+", "+g.homeName+" "+g.homeScore+(g.status?", "+g.status:"");
+    return html`<span key=${i} className="ticker-game fine" role="group" aria-label=${label}>
+    <${Logo} name=${g.awayName} src=${g.awayLogo} sz=${20} />
+    <span className="ticker-score" style=${mark(g.awayName)}>${g.awayScore}</span>
+    <span aria-hidden="true">–</span>
+    <span className="ticker-score" style=${mark(g.homeName)}>${g.homeScore}</span>
+    <${Logo} name=${g.homeName} src=${g.homeLogo} sz=${20} />
+    <span className=${"badge"+(g.live?" ticker-item live":"")} style=${{marginLeft:4}}>${g.status||""}</span>
+   </span>`;
+   })}
   </div></div>`:null}
 
   <div className="sheet">
@@ -988,10 +1042,10 @@ function App(){
 
     <div className="two" style=${{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginTop:16}}>
      <div className="card"><${Hd} r="W3+">HOT STREAKS</${Hd}><div style=${{padding:"8px 14px"}}>
-      ${!trusted?html`<div className="fine" style=${{color:GY,padding:6}}>Streaks load with the ESPN standings.</div>`:hot.length===0?html`<div className="fine" style=${{color:GY,padding:6}}>No active 3+ win streaks.</div>`:hot.slice(0,8).map(function(x){return html`<div key=${x.t} style=${{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"6px 0",borderBottom:"1px solid #F3E4CC",gap:8}}><${Tm} name=${x.t} /> <span style=${{display:"flex",gap:6,alignItems:"center"}}><span className="fine" style=${{color:MGR_COLORS[x.m]||G,fontWeight:800}}>${x.m}</span><${Stk} v=${x.v} /></span></div>`})}
+      ${!trusted?html`<div className="fine" style=${{color:GY,padding:6}}>Streaks load with the ESPN standings.</div>`:hot.length===0?html`<div className="fine" style=${{color:GY,padding:6}}>No active 3+ win streaks.</div>`:hot.slice(0,8).map(function(x){return html`<div key=${x.t} style=${{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"6px 0",borderBottom:"1px solid #F3E4CC",gap:8}}><${Tm} name=${x.t} /> <span style=${{display:"flex",gap:6,alignItems:"center"}}><span className="fine" style=${{color:mgrText(x.m),fontWeight:800}}>${x.m}</span><${Stk} v=${x.v} /></span></div>`})}
      </div></div>
      <div className="card"><${Hd} r="L3+">COLD STREAKS</${Hd}><div style=${{padding:"8px 14px"}}>
-      ${!trusted?html`<div className="fine" style=${{color:GY,padding:6}}>Streaks load with the ESPN standings.</div>`:cold.length===0?html`<div className="fine" style=${{color:GY,padding:6}}>No active 3+ losing streaks.</div>`:cold.slice(0,8).map(function(x){return html`<div key=${x.t} style=${{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"6px 0",borderBottom:"1px solid #F3E4CC",gap:8}}><${Tm} name=${x.t} /> <span style=${{display:"flex",gap:6,alignItems:"center"}}><span className="fine" style=${{color:MGR_COLORS[x.m]||G,fontWeight:800}}>${x.m}</span><${Stk} v=${x.v} /></span></div>`})}
+      ${!trusted?html`<div className="fine" style=${{color:GY,padding:6}}>Streaks load with the ESPN standings.</div>`:cold.length===0?html`<div className="fine" style=${{color:GY,padding:6}}>No active 3+ losing streaks.</div>`:cold.slice(0,8).map(function(x){return html`<div key=${x.t} style=${{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"6px 0",borderBottom:"1px solid #F3E4CC",gap:8}}><${Tm} name=${x.t} /> <span style=${{display:"flex",gap:6,alignItems:"center"}}><span className="fine" style=${{color:mgrText(x.m),fontWeight:800}}>${x.m}</span><${Stk} v=${x.v} /></span></div>`})}
      </div></div>
     </div>
 
@@ -1006,7 +1060,7 @@ function App(){
         <span style=${{display:"inline-flex",alignItems:"center",gap:6,fontWeight:800}}><${Crest} name=${m.name} sz=${22} /> ${m.name}</span>
         <span className="fine" style=${{fontWeight:800,color:label==="Hot"?GR:label==="Cold"?RD:GY}}>${m.s.l10ok?m.s.l10w+"-"+m.s.l10l+" · "+label:label}</span>
        </div>
-       <div className="meter" aria-hidden="true"><span style=${{width:(m.s.l10ok?Math.round(rate*100):0)+"%",background:MGR_COLORS[m.name]||G}}></span></div>
+       <div className="meter" aria-hidden="true"><span style=${{width:(m.s.l10ok?Math.round(rate*100):0)+"%",background:mgrFill(m.name)}}></span></div>
       </div>`;
      })}
     </div></div>
@@ -1014,7 +1068,7 @@ function App(){
 
    ${tab==="rosters"?html`<div>
     <div className="roster-grid" style=${{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(240px, 1fr))",gap:12,marginBottom:20}}>
-     ${dR.map(function(m){return html`<div key=${m.name} className="card" style=${{borderTop:"3px solid "+(MGR_COLORS[m.name]||GY)}}>
+     ${dR.map(function(m){return html`<div key=${m.name} className="card" style=${{borderTop:"3px solid "+mgrFill(m.name)}}>
       <div style=${{background:N,padding:"10px 14px",display:"flex",justifyContent:"space-between",alignItems:"center",gap:8}}>
        <span style=${{display:"inline-flex",alignItems:"center",gap:8,color:ON,fontWeight:800}}><${Crest} name=${m.name} sz=${24} /> ${m.name||"—"}</span>
        <span style=${{color:GA,fontWeight:800,fontSize:20,fontFamily:"'Oswald','Arial Narrow',sans-serif"}}>${trusted?m.s.tw:"—"}<span className="fine" style=${{fontWeight:700,marginLeft:2}}>W</span></span>
@@ -1046,7 +1100,7 @@ function App(){
        ${[].concat(div.teams).sort(function(a,b){return recOf(b).w-recOf(a).w||recOf(a).l-recOf(b).l}).map(function(t,i){var r=recOf(t);var owner=ownerOf(t);return html`<tr key=${t} style=${{background:i%2?"#fff":"#FAFAFA"}}>
         <td style=${{padding:"6px 8px",fontSize:13}}><${Tm} name=${t} sz=${14} /></td>
         <td style=${{textAlign:"center",fontWeight:800}}>${trusted?r.w+"-"+r.l:"—"}</td>
-        <td className="fine" style=${{padding:"6px 8px",fontWeight:700,color:owner==="Undrafted"?GY:(MGR_COLORS[owner]||N)}}>${owner}</td>
+        <td className="fine" style=${{padding:"6px 8px",fontWeight:700,color:owner==="Undrafted"?GY:mgrText(owner)}}>${owner}</td>
        </tr>`})}
       </tbody></table>
      </div>`})}
@@ -1159,7 +1213,7 @@ function App(){
       </tr></thead><tbody>
        ${g.teams.map(function(t){var own=ownerOf(t.name);var status=t.clinched?"Clinched group":g.complete?(t.rank===1?(t.tiedKeys?"Tied for the group":"Group winner"):"Did not win group"):t.outOfGroup?"Can't catch the leader":"Alive";return html`<tr key=${t.name} style=${{background:t.rank===1?LG:"#fff"}}>
         <td style=${{padding:"6px 8px",fontSize:13}}><${Tm} name=${t.name} sz=${16} /><div className="badge" style=${{color:GY}}>${status}</div></td>
-        <td className="fine" style=${{padding:"6px 8px",fontWeight:800,color:MGR_COLORS[own]||GY}}>${own==="Undrafted"?html`<span>Undrafted</span>`:html`<span style=${{display:"inline-flex",alignItems:"center",gap:4}}><${Crest} name=${own} sz=${18} /> ${own}</span>`}</td>
+        <td className="fine" style=${{padding:"6px 8px",fontWeight:800,color:own==="Undrafted"?GY:mgrText(own)}}>${own==="Undrafted"?html`<span>Undrafted</span>`:html`<span style=${{display:"inline-flex",alignItems:"center",gap:4}}><${Crest} name=${own} sz=${18} /> ${own}</span>`}</td>
         <td style=${{textAlign:"center",fontWeight:800}}>${t.w}-${t.l}</td>
         <td className="fine" style=${{textAlign:"center",fontWeight:800,color:t.diff>0?GR:t.diff<0?RD:GY}}>${t.diff>0?"+":""}${t.diff}</td>
         <td style=${{textAlign:"center"}}><${Stk} v=${t.streak} /></td>
