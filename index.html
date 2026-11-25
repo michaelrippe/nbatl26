@@ -61,6 +61,19 @@ table{border-collapse:collapse}
 .status-chip{margin-top:12px;background:var(--chip,var(--paper));color:var(--ink);border-radius:6px;padding:8px 16px;display:flex;justify-content:center;align-items:center;gap:12px;border-left:5px solid var(--on-dark-accent);border-right:5px solid var(--on-dark-accent);flex-wrap:wrap;position:relative}
 .sheet{max-width:1100px;margin:16px auto;padding:16px;background:var(--sheet);color:var(--ink);border-radius:14px;box-shadow:0 8px 30px rgba(40,18,6,0.35);border:2px solid var(--sheet-edge)}
 .floor-note{max-width:1100px;margin:0 auto 16px;background:var(--sheet);color:var(--ink);border:2px solid var(--sheet-edge);border-radius:12px;text-align:center;padding:12px 14px;font-size:12px;font-weight:700}
+.updates-link{color:var(--on-dark);font-size:12px;font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.interest-card{max-width:1100px;margin:0 auto 12px;background:var(--sheet);color:var(--ink);border:2px solid var(--sheet-edge);border-radius:14px;padding:16px 18px}
+.interest-card h2{font-family:'Oswald','Arial Narrow',sans-serif;font-size:22px;font-weight:700;line-height:1.15;margin-bottom:4px}
+.interest-card .sub{font-size:14px;line-height:1.45;color:var(--muted);margin-bottom:12px;max-width:42rem}
+.interest-form{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end}
+.interest-form label{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:800;flex:1 1 180px;min-width:0}
+.interest-form input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);font-size:16px}
+.interest-form .share-btn{min-height:44px}
+.interest-form .share-btn:disabled{opacity:.6;cursor:default}
+.hp{position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden}
+@media(max-width:640px){
+.interest-form label,.interest-form .share-btn{flex-basis:100%}
+}
 .theme-picker{display:flex;gap:6px;flex-wrap:wrap}
 .theme-picker button{min-height:44px;border-radius:6px;padding:8px 12px;font-size:12px;font-weight:800;border:1px solid var(--line);background:var(--paper);color:var(--ink)}
 .theme-picker button.on{background:var(--ink);color:var(--on-dark);border-color:var(--ink)}
@@ -548,6 +561,20 @@ function App(){
  var themeState=React.useState(function(){return document.documentElement.getAttribute("data-theme")||"a"});
  var themeId=themeState[0],setThemeId=themeState[1];
  var reduceMotion=React.useRef(window.matchMedia("(prefers-reduced-motion: reduce)").matches).current;
+ var interestSaved=false;
+ try{interestSaved=localStorage.getItem("tl_interest")==="1"}catch(e){}
+ var intDoneState=React.useState(interestSaved);
+ var intDone=intDoneState[0],setIntDone=intDoneState[1];
+ var intNameState=React.useState("");
+ var intName=intNameState[0],setIntName=intNameState[1];
+ var intEmailState=React.useState("");
+ var intEmail=intEmailState[0],setIntEmail=intEmailState[1];
+ var intWebState=React.useState("");
+ var intWeb=intWebState[0],setIntWeb=intWebState[1];
+ var intBusyState=React.useState(false);
+ var intBusy=intBusyState[0],setIntBusy=intBusyState[1];
+ var intErrState=React.useState("");
+ var intErr=intErrState[0],setIntErr=intErrState[1];
  var signState=React.useState({name:"",email:"",leagues:[],sent:false});
  var sign=signState[0],setSign=signState[1];
  var animState=React.useState(false);
@@ -901,6 +928,18 @@ function App(){
  }
  function setDMgr(i,v){if(!isAdmin||nlk)return;var nm=[].concat(dmg);nm[i]=v;push({draftManagers:nm})}
 
+ function markInterestSaved(){try{localStorage.setItem("tl_interest","1")}catch(e){} setIntDone(true)}
+ function submitInterest(e){
+  e.preventDefault();
+  if(intBusy)return;
+  if((intWeb||"").trim()){markInterestSaved();return}
+  var email=(intEmail||"").trim().toLowerCase();
+  var name=(intName||"").trim().slice(0,60);
+  if(email.length>120||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){setIntErr("Enter a valid email.");return}
+  setIntErr("");
+  setIntBusy(true);
+  fetch("https://mlbtl26-default-rtdb.firebaseio.com/interest.json",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:name,email:email,site:"nbatl26",ts:{".sv":"timestamp"}})}).then(function(r){if(!r.ok)throw new Error("save");markInterestSaved()}).catch(function(){setIntErr("Couldn't save right now. Try again later.")}).then(function(){setIntBusy(false)});
+ }
  function submitSignup(){
   if(!sign.name.trim()||!sign.email.trim())return;
   fetch("https://mlbtl26-default-rtdb.firebaseio.com/nbatl26/signups.json",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:sign.name.trim(),email:sign.email.trim(),leagues:sign.leagues,ts:Date.now()})}).catch(function(){});
@@ -964,6 +1003,7 @@ function App(){
     <div style=${{color:ON,textAlign:"right"}}>
      <div className="fine" style=${{fontWeight:800,letterSpacing:1}}>DEFENDING CHAMP: GAINZY</div>
      <div className="fine" style=${{marginTop:2}}>${locked?"Season final":"Est. 2024"} <span style=${{display:"inline-block",width:8,height:8,borderRadius:"50%",background:badge[0]==="LIVE"?"var(--live)":"var(--on-dark-accent)",marginLeft:6}}></span> ${badge[0]==="LIVE"?html`<span className="badge" style=${{color:"var(--live)"}}>LIVE</span>`:null}</div>
+     <div style=${{marginTop:4}}><a className="updates-link" href="#interest" onClick=${function(e){var el=document.getElementById("interest");if(!el)return;e.preventDefault();el.scrollIntoView({block:"start"})}}>Get updates</a></div>
     </div>
    </div>
    <div className="status-chip" data-counter="header" data-games=${gamesPlayed==null?"":String(gamesPlayed)} data-total="1230" data-phase=${src.phase} data-locked=${locked?"1":"0"}>
@@ -1363,6 +1403,17 @@ function App(){
     </div>
    </div>`:null}
   </div>
+  <section id="interest" className="interest-card" aria-labelledby="interest-title">
+   <h2 id="interest-title">Want in next season?</h2>
+   <p className="sub">Get updates on new Team League games, the app, and how to join.</p>
+   ${intDone?html`<p role="status" style=${{fontWeight:800}}>You're on the list. Thanks!</p>`:html`<form className="interest-form" onSubmit=${submitInterest} noValidate>
+    <label className="hp" aria-hidden="true">Website<input name="website" tabIndex="-1" autoComplete="off" value=${intWeb} onChange=${function(e){setIntWeb(e.target.value)}} /></label>
+    <label>Name<input name="name" maxLength="60" autoComplete="name" value=${intName} onChange=${function(e){setIntName(e.target.value)}} /></label>
+    <label>Email<input name="email" type="email" required maxLength="120" autoComplete="email" value=${intEmail} onChange=${function(e){setIntEmail(e.target.value)}} /></label>
+    <button type="submit" className="share-btn" disabled=${intBusy}>${intBusy?"Sending…":"Notify me"}</button>
+    ${intErr?html`<p className="fine" role="alert" style=${{flexBasis:"100%",color:RD,fontWeight:700}}>${intErr}</p>`:null}
+   </form>`}
+  </section>
   <div className="floor-note">NBA Team League 2026-27 · Est. 2024 · $300 Prize Pool · Defending Champ: Gainzy</div>
  </div>`;
 }
