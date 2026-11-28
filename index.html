@@ -6,21 +6,25 @@
 <title>NBA Team League 2026-27</title>
 <link rel="canonical" href="https://nba.playteamleague.com/">
 <meta property="og:url" content="https://nba.playteamleague.com/">
-<meta name="theme-color" content="#111111">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏀</text></svg>">
+<meta property="og:image" content="https://nba.playteamleague.com/icon-512.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://nba.playteamleague.com/icon-512.png">
+<meta name="theme-color" content="#F4F1EA">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
 <script>
 (function(){
-  var t="a";
+  try{localStorage.removeItem("nbatl26-theme")}catch(e){}
   try{
-    var q=new URLSearchParams(location.search).get("theme");
-    var saved=localStorage.getItem("nbatl26-theme");
-    if(q==="a"||q==="b"||q==="c")t=q;
-    else if(saved==="a"||saved==="b"||saved==="c")t=saved;
+    var u=new URL(location.href);
+    if(u.searchParams.has("theme")){
+      u.searchParams.delete("theme");
+      history.replaceState(null,"",u.pathname+u.search+u.hash);
+    }
   }catch(e){}
-  document.documentElement.setAttribute("data-theme",t);
-  var meta=document.querySelector('meta[name="theme-color"]');
-  var colors={a:"#111111",b:"#F4F1EA",c:"#FF4F00"};
-  if(meta)meta.setAttribute("content",colors[t]||"#111111");
 })();
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
@@ -28,17 +32,8 @@
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script crossorigin src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js" integrity="sha384-toVdrLSMaw7Y55MowcKqkmFL/Ek6Sky62NOk0b5sDDZBu2wcoPyyQUt9unDVjXhL" crossorigin="anonymous"></script>
 <style>
-/* Three cuts of the same brand: orange #FF4F00, black #111111, cream #F4F1EA, leather #F26A1B. */
-:root,[data-theme="a"]{
-  --header:#111111;--header-2:#0A0A0A;--on-dark:#F4F1EA;--on-dark-accent:#FF4F00;
-  --bar:#0A0A0A;--on-bar:#F4F1EA;--bar-accent:#FF4F00;
-  --ink:#F4F1EA;--paper:#1A1A1A;--paper-2:#242424;--leader:#2A120C;--line:#3A3A3A;
-  --accent:#FF4F00;--accent-fill:#FF4F00;--on-fill:#111111;--muted:#C8C2B8;
-  --good:#7DDE8A;--bad:#FF8A7A;--good-bg:#14321C;--bad-bg:#3A1614;
-  --live:#7DDE8A;--leather:#F26A1B;--sheet:#111111;--sheet-edge:#FF4F00;--focus:#FF4F00;
-  --page:#111111;--page-image:repeating-linear-gradient(90deg,transparent 0 72px,rgba(255,79,0,.22) 72px 73px);
-}
-[data-theme="b"]{
+/* Heritage only: cream #F4F1EA, black #111111, leather orange #F26A1B, black seam lines. */
+:root{
   --header:#111111;--header-2:#0A0A0A;--on-dark:#F4F1EA;--on-dark-accent:#F26A1B;
   --bar:#111111;--on-bar:#F4F1EA;--bar-accent:#F26A1B;
   --ink:#111111;--paper:#F4F1EA;--paper-2:#E7E1D4;--leader:#FFE4D4;--line:#2A2A2A;
@@ -46,15 +41,6 @@
   --good:#146C36;--bad:#9B2C2C;--good-bg:#DDF5E4;--bad-bg:#FDE2DE;
   --live:#7DDE8A;--leather:#F26A1B;--sheet:#F4F1EA;--sheet-edge:#111111;--focus:#B33A0C;
   --page:#F4F1EA;--page-image:repeating-linear-gradient(90deg,transparent 0 71px,rgba(17,17,17,.16) 71px 72px),repeating-linear-gradient(0deg,transparent 0 71px,rgba(17,17,17,.08) 71px 72px);
-}
-[data-theme="c"]{
-  --header:#FF4F00;--header-2:#FF4F00;--on-dark:#111111;--on-dark-accent:#111111;
-  --bar:#111111;--on-bar:#F4F1EA;--bar-accent:#FF4F00;
-  --ink:#111111;--paper:#F4F1EA;--paper-2:#E7E1D4;--leader:#FF4F00;--line:#111111;
-  --accent:#111111;--accent-fill:#FF4F00;--on-fill:#111111;--muted:#111111;
-  --good:#146C36;--bad:#9B2C2C;--good-bg:#DDF5E4;--bad-bg:#FDE2DE;
-  --live:#7DDE8A;--leather:#F26A1B;--sheet:#F4F1EA;--sheet-edge:#111111;--focus:#111111;
-  --page:#F4F1EA;--page-image:none;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{max-width:100%}
@@ -89,9 +75,8 @@ table{border-collapse:collapse}
 @media(max-width:640px){
 .interest-form label,.interest-form .share-btn{flex-basis:100%}
 }
-.theme-picker{display:flex;gap:6px;flex-wrap:wrap}
-.theme-picker button{min-height:44px;border-radius:6px;padding:8px 12px;font-size:12px;font-weight:800;border:1px solid var(--line);background:var(--paper);color:var(--ink)}
-.theme-picker button.on{background:var(--accent-fill);color:var(--on-fill);border-color:var(--accent-fill)}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.brand-logo{width:64px;height:64px;max-width:none;flex:none;display:block;border-radius:10px}
 .hdr-svg{position:absolute;right:-10px;top:-40px;opacity:.14;pointer-events:none}
 .fine{font-size:12px;line-height:1.35}
 .badge{font-size:10px;font-weight:800;line-height:1.35;display:inline-block}
@@ -102,7 +87,6 @@ table{border-collapse:collapse}
 .ms{color:var(--muted)}
 .glass{background:var(--paper);border:1px solid var(--line)}
 .gold-row{animation:goldGlow 3s ease-in-out infinite;border-radius:8px}
-[data-theme="c"] .gold-row td,[data-theme="c"] .gold-row .fine{color:#111111 !important}
 .ticker-wrap{overflow:hidden;width:100%;background:var(--header);border-bottom:3px solid var(--on-dark-accent);padding:8px 0;position:relative;color:var(--on-dark);-webkit-mask-image:linear-gradient(90deg,transparent,#000 28px,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,transparent,#000 28px,#000 calc(100% - 28px),transparent)}
 .ticker-wrap:hover .ticker-track,.ticker-wrap:focus-within .ticker-track,.ticker-wrap.is-paused .ticker-track{animation-play-state:paused}
 .ticker-track{display:flex;gap:32px;white-space:nowrap;animation:tickerScroll 80s linear infinite;width:max-content}
@@ -147,6 +131,7 @@ table{border-collapse:collapse}
 .hdr{padding:16px 12px 12px!important}
 .hdr-row{flex-direction:column!important;align-items:flex-start!important;gap:8px}
 .hdr-row>div:last-child{text-align:left!important}
+.brand-logo{width:48px;height:48px}
 h1{font-size:22px!important}
 .tabs-row{gap:6px;padding-bottom:8px}
 .tabs-row button{flex:1 0 auto;padding:10px 12px!important;font-size:12px!important;min-height:44px;border-radius:6px;white-space:nowrap}
@@ -229,7 +214,6 @@ var CUP_LABELS=[
  {name:"West Group C",conf:"West",teams:["Blazers","Kings","Lakers","Spurs","Warriors"]}
 ];
 var N="var(--ink)",G="var(--accent)",GA="var(--bar-accent)",ON="var(--on-dark)",LG="var(--leader)",LN="var(--paper-2)",GR="var(--good)",RD="var(--bad)",GY="var(--muted)",MG="var(--line)";
-var THEME_COLOR={a:"#111111",b:"#F4F1EA",c:"#FF4F00"};
 var HIST_2526=[
  {rk:1,name:"Gainzy",w:310,best:"Thunder (64W)",teams:"Thunder 64, Pistons 60, Timberwolves 49, Magic 45, Suns 45, Grizzlies 25, Kings 22",color:LG},
  {rk:2,name:"Gallup (G$)",w:309,best:"Knicks (53W)",teams:"Knicks 53, Rockets 52, Hawks 46, Raptors 46, Hornets 44, Trail Blazers 42, Mavericks 26",color:"var(--paper-2)"},
@@ -575,8 +559,6 @@ function App(){
  var tickTrack=React.useRef(null);
  var tickPauseState=React.useState(false);
  var tickPaused=tickPauseState[0],setTickPaused=tickPauseState[1];
- var themeState=React.useState(function(){return document.documentElement.getAttribute("data-theme")||"a"});
- var themeId=themeState[0],setThemeId=themeState[1];
  var reduceMotion=React.useRef(window.matchMedia("(prefers-reduced-motion: reduce)").matches).current;
  var interestSaved=false;
  try{interestSaved=localStorage.getItem("tl_interest")==="1"}catch(e){}
@@ -735,16 +717,6 @@ function App(){
   var distance=track.scrollWidth/2;
   if(distance>0)track.style.animationDuration=(distance/35)+"s";
  },[ticker,roster]);
- function chooseTheme(id){
-  setThemeId(id);
-  document.documentElement.setAttribute("data-theme",id);
-  var meta=document.querySelector('meta[name="theme-color"]');
-  if(meta)meta.setAttribute("content",THEME_COLOR[id]||"#111111");
-  try{localStorage.setItem("nbatl26-theme",id)}catch(e){}
-  var u=new URL(location.href);
-  u.searchParams.set("theme",id);
-  history.replaceState(null,"",u.pathname+u.search+u.hash);
- }
  function syncNow(){
   setSyncing(true);
   Promise.all([loadRef.current({manual:true}),cupRef.current({manual:true})]).then(function(){setSyncing(false)},function(){setSyncing(false)});
@@ -1015,9 +987,12 @@ function App(){
    <div className="court-stripe"></div>
    <svg className="hdr-svg" aria-hidden="true" width="190" height="190" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" strokeWidth="2.5"/><path d="M50 4V96M4 50H96" stroke="currentColor" strokeWidth="2.5" fill="none"/><path d="M16 16C34 32 34 68 16 84M84 16C66 32 66 68 84 84" stroke="currentColor" strokeWidth="2.5" fill="none"/></svg>
    <div className="hdr-row" style=${{display:"flex",justifyContent:"space-between",alignItems:"flex-end",position:"relative",paddingTop:22}}>
-    <div>
-     <div className="mark fine" style=${{marginBottom:6}}>The Official</div>
-     <h1 style=${{color:ON,fontSize:36,fontWeight:700,margin:0,letterSpacing:1,textTransform:"uppercase",fontFamily:"'Oswald','Arial Narrow',sans-serif",lineHeight:1.05}}>NBA Team League <span className="mark" style=${{marginLeft:4}}>2026-27</span></h1>
+    <div className="brand">
+     <img className="brand-logo" src="logo-256.png" alt="" width="64" height="64" />
+     <div>
+      <div className="mark fine" style=${{marginBottom:6}}>PLAY</div>
+      <h1 style=${{color:ON,fontSize:36,fontWeight:700,margin:0,letterSpacing:1,textTransform:"uppercase",fontFamily:"'Oswald','Arial Narrow',sans-serif",lineHeight:1.05}}>NBA Team League <span className="mark" style=${{marginLeft:4}}>2026-27</span></h1>
+     </div>
     </div>
     <div style=${{color:ON,textAlign:"right"}}>
      <div className="fine" style=${{fontWeight:800,letterSpacing:1}}>DEFENDING CHAMP: GAINZY</div>
@@ -1059,9 +1034,6 @@ function App(){
     <div className="fine" style=${{display:"flex",justifyContent:"space-between",alignItems:"center",gap:10,marginBottom:12,flexWrap:"wrap"}}>
     <span style=${{color:src.error?RD:GY,fontWeight:700}}>${sub}</span>
     <div style=${{display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
-     <div className="theme-picker" role="group" aria-label="Color theme">
-      ${[["a","A · Arena"],["b","B · Heritage"],["c","C · Champ"]].map(function(opt){return html`<button type="button" key=${opt[0]} className=${themeId===opt[0]?"on":""} aria-pressed=${themeId===opt[0]?"true":"false"} onClick=${function(){chooseTheme(opt[0])}}>${opt[1]}</button>`})}
-     </div>
      <button type="button" className="sync-btn" onClick=${syncNow} disabled=${syncing}>${syncing?"SYNCING…":"SYNC"}</button>
     </div>
    </div>
