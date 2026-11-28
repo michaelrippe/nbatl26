@@ -6,15 +6,8 @@
 <title>NBA Team League 2026-27</title>
 <link rel="canonical" href="https://nba.playteamleague.com/">
 <meta property="og:url" content="https://nba.playteamleague.com/">
-<meta property="og:image" content="https://nba.playteamleague.com/icon-512.png">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://nba.playteamleague.com/icon-512.png">
 <meta name="theme-color" content="#F4F1EA">
-<link rel="icon" href="favicon.ico" sizes="any">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="manifest" href="site.webmanifest">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏀</text></svg>">
 <script>
 (function(){
   try{localStorage.removeItem("nbatl26-theme")}catch(e){}
@@ -75,8 +68,6 @@ table{border-collapse:collapse}
 @media(max-width:640px){
 .interest-form label,.interest-form .share-btn{flex-basis:100%}
 }
-.brand{display:flex;align-items:center;gap:12px;min-width:0}
-.brand-logo{width:64px;height:64px;max-width:none;flex:none;display:block;border-radius:10px}
 .hdr-svg{position:absolute;right:-10px;top:-40px;opacity:.14;pointer-events:none}
 .fine{font-size:12px;line-height:1.35}
 .badge{font-size:10px;font-weight:800;line-height:1.35;display:inline-block}
@@ -131,7 +122,6 @@ table{border-collapse:collapse}
 .hdr{padding:16px 12px 12px!important}
 .hdr-row{flex-direction:column!important;align-items:flex-start!important;gap:8px}
 .hdr-row>div:last-child{text-align:left!important}
-.brand-logo{width:48px;height:48px}
 h1{font-size:22px!important}
 .tabs-row{gap:6px;padding-bottom:8px}
 .tabs-row button{flex:1 0 auto;padding:10px 12px!important;font-size:12px!important;min-height:44px;border-radius:6px;white-space:nowrap}
@@ -987,12 +977,9 @@ function App(){
    <div className="court-stripe"></div>
    <svg className="hdr-svg" aria-hidden="true" width="190" height="190" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" strokeWidth="2.5"/><path d="M50 4V96M4 50H96" stroke="currentColor" strokeWidth="2.5" fill="none"/><path d="M16 16C34 32 34 68 16 84M84 16C66 32 66 68 84 84" stroke="currentColor" strokeWidth="2.5" fill="none"/></svg>
    <div className="hdr-row" style=${{display:"flex",justifyContent:"space-between",alignItems:"flex-end",position:"relative",paddingTop:22}}>
-    <div className="brand">
-     <img className="brand-logo" src="logo-256.png" alt="" width="64" height="64" />
-     <div>
-      <div className="mark fine" style=${{marginBottom:6}}>PLAY</div>
-      <h1 style=${{color:ON,fontSize:36,fontWeight:700,margin:0,letterSpacing:1,textTransform:"uppercase",fontFamily:"'Oswald','Arial Narrow',sans-serif",lineHeight:1.05}}>NBA Team League <span className="mark" style=${{marginLeft:4}}>2026-27</span></h1>
-     </div>
+    <div>
+     <div className="mark fine" style=${{marginBottom:6}}>PLAY</div>
+     <h1 style=${{color:ON,fontSize:36,fontWeight:700,margin:0,letterSpacing:1,textTransform:"uppercase",fontFamily:"'Oswald','Arial Narrow',sans-serif",lineHeight:1.05}}>NBA Team League <span className="mark" style=${{marginLeft:4}}>2026-27</span></h1>
     </div>
     <div style=${{color:ON,textAlign:"right"}}>
      <div className="fine" style=${{fontWeight:800,letterSpacing:1}}>DEFENDING CHAMP: GAINZY</div>
