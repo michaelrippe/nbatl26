@@ -6,6 +6,7 @@
 <title>NBA Team League 2026-27</title>
 <link rel="canonical" href="https://nba.playteamleague.com/">
 <meta property="og:url" content="https://nba.playteamleague.com/">
+<meta name="theme-color" content="#111111">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏀</text></svg>">
 <script>
 (function(){
@@ -17,6 +18,9 @@
     else if(saved==="a"||saved==="b"||saved==="c")t=saved;
   }catch(e){}
   document.documentElement.setAttribute("data-theme",t);
+  var meta=document.querySelector('meta[name="theme-color"]');
+  var colors={a:"#111111",b:"#F4F1EA",c:"#FF4F00"};
+  if(meta)meta.setAttribute("content",colors[t]||"#111111");
 })();
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
@@ -24,28 +28,37 @@
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script crossorigin src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js" integrity="sha384-toVdrLSMaw7Y55MowcKqkmFL/Ek6Sky62NOk0b5sDDZBu2wcoPyyQUt9unDVjXhL" crossorigin="anonymous"></script>
 <style>
-/* Hardwood floor stays. Chrome colors come from the theme on <html data-theme>. */
+/* Three cuts of the same brand: orange #FF4F00, black #111111, cream #F4F1EA, leather #F26A1B. */
 :root,[data-theme="a"]{
-  --header:#10243F;--header-2:#1B3358;--on-dark:#F7F1E4;--on-dark-accent:#E7C56A;
-  --ink:#10243F;--paper:#FBF6EC;--paper-2:#F4EBD8;--line:#E4D7C2;
-  --accent:#7A5B16;--accent-fill:#E7C56A;--muted:#3E4C63;--good:#146C36;--bad:#9B2C2C;
-  --live:#B6F7C8;--sheet:#FBF6EC;--sheet-edge:#5C4630;--focus:#7A5B16
+  --header:#111111;--header-2:#0A0A0A;--on-dark:#F4F1EA;--on-dark-accent:#FF4F00;
+  --bar:#0A0A0A;--on-bar:#F4F1EA;--bar-accent:#FF4F00;
+  --ink:#F4F1EA;--paper:#1A1A1A;--paper-2:#242424;--leader:#2A120C;--line:#3A3A3A;
+  --accent:#FF4F00;--accent-fill:#FF4F00;--on-fill:#111111;--muted:#C8C2B8;
+  --good:#7DDE8A;--bad:#FF8A7A;--good-bg:#14321C;--bad-bg:#3A1614;
+  --live:#7DDE8A;--leather:#F26A1B;--sheet:#111111;--sheet-edge:#FF4F00;--focus:#FF4F00;
+  --page:#111111;--page-image:repeating-linear-gradient(90deg,transparent 0 72px,rgba(255,79,0,.22) 72px 73px);
 }
 [data-theme="b"]{
-  --header:#1A120E;--header-2:#2A1C16;--on-dark:#F6EFE4;--on-dark-accent:#FFB07A;
-  --ink:#1A120E;--paper:#F8F1E7;--paper-2:#F3E6D4;--line:#E4D3C0;
-  --accent:#8A3E12;--accent-fill:#E38A45;--muted:#5C4638;--good:#146C36;--bad:#9B2C2C;
-  --live:#B6F7C8;--sheet:#F8F1E7;--sheet-edge:#4A3428;--focus:#8A3E12
+  --header:#111111;--header-2:#0A0A0A;--on-dark:#F4F1EA;--on-dark-accent:#F26A1B;
+  --bar:#111111;--on-bar:#F4F1EA;--bar-accent:#F26A1B;
+  --ink:#111111;--paper:#F4F1EA;--paper-2:#E7E1D4;--leader:#FFE4D4;--line:#2A2A2A;
+  --accent:#B33A0C;--accent-fill:#F26A1B;--on-fill:#111111;--muted:#3A3A3A;
+  --good:#146C36;--bad:#9B2C2C;--good-bg:#DDF5E4;--bad-bg:#FDE2DE;
+  --live:#7DDE8A;--leather:#F26A1B;--sheet:#F4F1EA;--sheet-edge:#111111;--focus:#B33A0C;
+  --page:#F4F1EA;--page-image:repeating-linear-gradient(90deg,transparent 0 71px,rgba(17,17,17,.16) 71px 72px),repeating-linear-gradient(0deg,transparent 0 71px,rgba(17,17,17,.08) 71px 72px);
 }
 [data-theme="c"]{
-  --header:#0E2F24;--header-2:#164538;--on-dark:#F7F3E8;--on-dark-accent:#E2C16B;
-  --ink:#0E2F24;--paper:#F7F3E8;--paper-2:#EFE6D2;--line:#DDD2BC;
-  --accent:#6B5012;--accent-fill:#E2C16B;--muted:#3E564C;--good:#146C36;--bad:#9B2C2C;
-  --live:#B6F7C8;--sheet:#F7F3E8;--sheet-edge:#3E564C;--focus:#6B5012
+  --header:#FF4F00;--header-2:#FF4F00;--on-dark:#111111;--on-dark-accent:#111111;
+  --bar:#111111;--on-bar:#F4F1EA;--bar-accent:#FF4F00;
+  --ink:#111111;--paper:#F4F1EA;--paper-2:#E7E1D4;--leader:#FF4F00;--line:#111111;
+  --accent:#111111;--accent-fill:#FF4F00;--on-fill:#111111;--muted:#111111;
+  --good:#146C36;--bad:#9B2C2C;--good-bg:#DDF5E4;--bad-bg:#FDE2DE;
+  --live:#7DDE8A;--leather:#F26A1B;--sheet:#F4F1EA;--sheet-edge:#111111;--focus:#111111;
+  --page:#F4F1EA;--page-image:none;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{max-width:100%}
-body{font-family:'Libre Franklin','Helvetica Neue',sans-serif;background-color:#C48A4A;background-image:repeating-linear-gradient(0deg,rgba(60,30,10,.035) 0,rgba(60,30,10,.035) 1px,transparent 1px,transparent 5px),repeating-linear-gradient(90deg,#C48A4A 0,#C48A4A 78px,#7a4e24 78px,#7a4e24 80px,#CF9959 80px,#CF9959 158px,#7a4e24 158px,#7a4e24 160px,#BE8343 160px,#BE8343 238px,#7a4e24 238px,#7a4e24 240px,#D3A062 240px,#D3A062 318px,#7a4e24 318px,#7a4e24 320px);background-attachment:fixed;color:var(--ink)}
+body{font-family:'Libre Franklin','Helvetica Neue',sans-serif;background-color:var(--page);background-image:var(--page-image);background-attachment:fixed;color:var(--ink)}
 input:focus-visible,button:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 button{cursor:pointer;font-family:inherit}
 button:active{transform:scale(0.97)}
@@ -55,11 +68,11 @@ img.team-logo{max-width:none;object-fit:contain;flex:none;display:block}
 table{border-collapse:collapse}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes goldGlow{0%,100%{box-shadow:0 0 8px rgba(232,144,58,0.3)}50%{box-shadow:0 0 20px rgba(232,144,58,0.5)}}
+@keyframes goldGlow{0%,100%{box-shadow:inset 4px 0 0 var(--accent-fill),0 0 0 1px var(--accent-fill)}50%{box-shadow:inset 4px 0 0 var(--accent-fill),0 0 12px rgba(255,79,0,.45)}}
 @keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 .hdr{position:relative;overflow:hidden;background:linear-gradient(135deg,var(--header) 0%,var(--header-2) 55%,var(--header) 100%);padding:0 32px 0;border-bottom:5px solid var(--on-dark-accent);color:var(--on-dark)}
 .court-stripe{position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,var(--on-dark-accent) 0 33%,var(--on-dark) 33% 66%,var(--on-dark-accent) 66% 100%)}
-.mark{display:inline-block;background:var(--accent-fill);color:var(--ink);font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:4px}
+.mark{display:inline-block;background:var(--accent-fill);color:var(--on-fill);font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:4px}
 .status-chip{margin-top:12px;background:var(--chip,var(--paper));color:var(--ink);border-radius:6px;padding:8px 16px;display:flex;justify-content:center;align-items:center;gap:12px;border-left:5px solid var(--on-dark-accent);border-right:5px solid var(--on-dark-accent);flex-wrap:wrap;position:relative}
 .sheet{max-width:1100px;margin:16px auto;padding:16px;background:var(--sheet);color:var(--ink);border-radius:14px;box-shadow:0 8px 30px rgba(40,18,6,0.35);border:2px solid var(--sheet-edge)}
 .floor-note{max-width:1100px;margin:0 auto 16px;background:var(--sheet);color:var(--ink);border:2px solid var(--sheet-edge);border-radius:12px;text-align:center;padding:12px 14px;font-size:12px;font-weight:700}
@@ -78,7 +91,7 @@ table{border-collapse:collapse}
 }
 .theme-picker{display:flex;gap:6px;flex-wrap:wrap}
 .theme-picker button{min-height:44px;border-radius:6px;padding:8px 12px;font-size:12px;font-weight:800;border:1px solid var(--line);background:var(--paper);color:var(--ink)}
-.theme-picker button.on{background:var(--ink);color:var(--on-dark);border-color:var(--ink)}
+.theme-picker button.on{background:var(--accent-fill);color:var(--on-fill);border-color:var(--accent-fill)}
 .hdr-svg{position:absolute;right:-10px;top:-40px;opacity:.14;pointer-events:none}
 .fine{font-size:12px;line-height:1.35}
 .badge{font-size:10px;font-weight:800;line-height:1.35;display:inline-block}
@@ -89,6 +102,7 @@ table{border-collapse:collapse}
 .ms{color:var(--muted)}
 .glass{background:var(--paper);border:1px solid var(--line)}
 .gold-row{animation:goldGlow 3s ease-in-out infinite;border-radius:8px}
+[data-theme="c"] .gold-row td,[data-theme="c"] .gold-row .fine{color:#111111 !important}
 .ticker-wrap{overflow:hidden;width:100%;background:var(--header);border-bottom:3px solid var(--on-dark-accent);padding:8px 0;position:relative;color:var(--on-dark);-webkit-mask-image:linear-gradient(90deg,transparent,#000 28px,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,transparent,#000 28px,#000 calc(100% - 28px),transparent)}
 .ticker-wrap:hover .ticker-track,.ticker-wrap:focus-within .ticker-track,.ticker-wrap.is-paused .ticker-track{animation-play-state:paused}
 .ticker-track{display:flex;gap:32px;white-space:nowrap;animation:tickerScroll 80s linear infinite;width:max-content}
@@ -100,11 +114,11 @@ table{border-collapse:collapse}
 .tabs-row button{background:transparent;color:var(--on-dark);border:none;border-top:3px solid transparent;padding:9px 16px;font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;border-radius:6px 6px 0 0}
 .tabs-row button.on{background:var(--paper);color:var(--ink);border-top-color:var(--on-dark-accent)}
 .share-btn,.sync-btn,.retry-btn{min-height:44px;min-width:44px;border:none;border-radius:6px;padding:10px 14px;font-size:12px;font-weight:800;letter-spacing:.04em}
-.share-btn{background:var(--accent-fill);color:var(--ink)}
-.sync-btn{background:var(--ink);color:var(--on-dark)}
+.share-btn{background:var(--accent-fill);color:var(--on-fill)}
+.sync-btn{background:var(--bar);color:var(--on-bar);border:1px solid var(--on-dark-accent)}
 .sync-btn:disabled{background:var(--line);color:var(--muted)}
-.retry-btn{background:var(--ink);color:var(--on-dark)}
-.alert{background:#FEF3C7;border:1px solid var(--accent);border-radius:8px;padding:12px 14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;color:var(--ink)}
+.retry-btn{background:var(--bar);color:var(--on-bar);border:1px solid var(--on-dark-accent)}
+.alert{background:var(--paper-2);border:1px solid var(--accent);border-radius:8px;padding:12px 14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;color:var(--ink)}
 .alert strong{display:block;font-size:14px;color:var(--ink)}
 .alert p{font-size:13px;color:var(--ink);line-height:1.45;margin-top:4px;max-width:680px}
 .champ{background:linear-gradient(100deg,var(--header),var(--header-2));color:var(--on-dark);border-radius:10px;padding:14px 16px;margin-bottom:14px}
@@ -116,17 +130,17 @@ table{border-collapse:collapse}
 .logo-fallback{display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:var(--header);color:var(--on-dark);font-weight:800;flex:none;line-height:1}
 .crest{display:block;flex:none}
 .draft-cards{display:none}
-.draft-round{padding:12px 14px;border-top:1px solid #E5E5E5}
+.draft-round{padding:12px 14px;border-top:1px solid var(--line)}
 .draft-round h3{font-size:12px;font-weight:800;letter-spacing:.08em;color:var(--accent);margin-bottom:8px}
 .draft-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .draft-pick{background:var(--paper-2);border:1px solid var(--line);border-radius:8px;padding:8px;min-width:0;color:var(--ink)}
 .draft-pick .meta{display:flex;justify-content:space-between;gap:6px;align-items:center;font-size:12px;font-weight:800;color:var(--ink);margin-bottom:4px}
-.pill{display:inline-block;font-size:12px;font-weight:800;color:var(--on-dark);padding:3px 10px;border-radius:4px;letter-spacing:.06em}
-.meter{background:#E5E5E5;border-radius:99px;height:10px;overflow:hidden;position:relative}
+.pill{display:inline-block;font-size:12px;font-weight:800;color:var(--on-fill);padding:3px 10px;border-radius:4px;letter-spacing:.06em}
+.meter{background:var(--line);border-radius:99px;height:10px;overflow:hidden;position:relative}
 .meter > span{display:block;height:100%;border-radius:99px}
 .view-toggle{display:flex;gap:6px;flex-wrap:wrap}
 .view-toggle button{min-height:44px;border-radius:6px;padding:8px 12px;font-size:12px;font-weight:800;border:1px solid var(--line);background:var(--paper);color:var(--ink)}
-.view-toggle button.on{background:var(--ink);color:var(--on-dark);border-color:var(--ink)}
+.view-toggle button.on{background:var(--accent-fill);color:var(--on-fill);border-color:var(--accent-fill)}
 .cup-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .card{background:var(--paper);border-radius:12px;overflow:hidden;border:1px solid var(--line);color:var(--ink)}
 @media(max-width:640px){
@@ -214,12 +228,13 @@ var CUP_LABELS=[
  {name:"West Group B",conf:"West",teams:["Clippers","Grizzlies","Pelicans","Thunder","Timberwolves"]},
  {name:"West Group C",conf:"West",teams:["Blazers","Kings","Lakers","Spurs","Warriors"]}
 ];
-var N="var(--ink)",G="var(--accent)",GA="var(--on-dark-accent)",ON="var(--on-dark)",LG="var(--paper-2)",LN="var(--paper-2)",GR="var(--good)",RD="var(--bad)",GY="var(--muted)",MG="var(--line)";
+var N="var(--ink)",G="var(--accent)",GA="var(--bar-accent)",ON="var(--on-dark)",LG="var(--leader)",LN="var(--paper-2)",GR="var(--good)",RD="var(--bad)",GY="var(--muted)",MG="var(--line)";
+var THEME_COLOR={a:"#111111",b:"#F4F1EA",c:"#FF4F00"};
 var HIST_2526=[
  {rk:1,name:"Gainzy",w:310,best:"Thunder (64W)",teams:"Thunder 64, Pistons 60, Timberwolves 49, Magic 45, Suns 45, Grizzlies 25, Kings 22",color:LG},
- {rk:2,name:"Gallup (G$)",w:309,best:"Knicks (53W)",teams:"Knicks 53, Rockets 52, Hawks 46, Raptors 46, Hornets 44, Trail Blazers 42, Mavericks 26",color:"#FAFAFA"},
- {rk:3,name:"Rippe",w:303,best:"Spurs (62W)",teams:"Spurs 62, Celtics 56, Nuggets 54, Clippers 42, Bucks 32, Bulls 31, Pelicans 26",color:"#fff"},
- {rk:4,name:"Swaggy",w:269,best:"Lakers (53W)",teams:"Lakers 53, Cavaliers 52, 76ers 45, Heat 43, Warriors 37, Nets 20, Pacers 19",color:"#FAFAFA"}
+ {rk:2,name:"Gallup (G$)",w:309,best:"Knicks (53W)",teams:"Knicks 53, Rockets 52, Hawks 46, Raptors 46, Hornets 44, Trail Blazers 42, Mavericks 26",color:"var(--paper-2)"},
+ {rk:3,name:"Rippe",w:303,best:"Spurs (62W)",teams:"Spurs 62, Celtics 56, Nuggets 54, Clippers 42, Bucks 32, Bulls 31, Pelicans 26",color:"var(--paper)"},
+ {rk:4,name:"Swaggy",w:269,best:"Lakers (53W)",teams:"Lakers 53, Cavaliers 52, 76ers 45, Heat 43, Warriors 37, Nets 20, Pacers 19",color:"var(--paper-2)"}
 ];
 
 function toArr(v){if(!v)return[];if(Array.isArray(v))return v;return Object.values(v)}
@@ -509,11 +524,11 @@ function Tm(p){
 function Stk(p){
  if(!p.v)return null;
  var w=p.v.charAt(0)==="W";
- return html`<span className="badge stk" style=${{color:w?GR:RD,background:w?"#DCFCE7":"#FEE2E2"}}>${p.v}</span>`;
+ return html`<span className="badge stk" style=${{color:w?GR:RD,background:w?"var(--good-bg)":"var(--bad-bg)"}}>${p.v}</span>`;
 }
 function Hd(p){
- return html`<div style=${{background:N,padding:"12px 16px",display:"flex",justifyContent:"space-between",alignItems:"center",gap:8,flexWrap:"wrap"}}>
-  <span className="fine" style=${{color:ON,fontWeight:800}}>${p.children}</span>
+ return html`<div style=${{background:"var(--bar)",padding:"12px 16px",display:"flex",justifyContent:"space-between",alignItems:"center",gap:8,flexWrap:"wrap"}}>
+  <span className="fine" style=${{color:"var(--on-bar)",fontWeight:800}}>${p.children}</span>
   ${p.r?html`<span className="fine" style=${{color:GA,fontWeight:700}}>${p.r}</span>`:null}
  </div>`;
 }
@@ -723,6 +738,8 @@ function App(){
  function chooseTheme(id){
   setThemeId(id);
   document.documentElement.setAttribute("data-theme",id);
+  var meta=document.querySelector('meta[name="theme-color"]');
+  if(meta)meta.setAttribute("content",THEME_COLOR[id]||"#111111");
   try{localStorage.setItem("nbatl26-theme",id)}catch(e){}
   var u=new URL(location.href);
   u.searchParams.set("theme",id);
@@ -841,14 +858,14 @@ function App(){
  function shareStandings(){
   if(!standingsRef.current||sharePhase==="working")return;
   setShare("working");
-  loadHtml2Canvas().then(function(h2c){return h2c(standingsRef.current,{backgroundColor:"#FFF6E8",scale:2,useCORS:true})})
+  loadHtml2Canvas().then(function(h2c){return h2c(standingsRef.current,{backgroundColor:"#F4F1EA",scale:2,useCORS:true})})
    .then(function(canvas){return saveCanvas(canvas,"nba-tl-standings.png","NBA Team League 2026-27 Standings")})
    .then(function(){setShare("idle")}).catch(function(){setShare("error")});
  }
  function shareDraft(){
   if(!draftResultsRef.current||dShare==="working")return;
   setDShare("working");
-  loadHtml2Canvas().then(function(h2c){return h2c(draftResultsRef.current,{backgroundColor:"#FFF6E8",scale:2,useCORS:true})})
+  loadHtml2Canvas().then(function(h2c){return h2c(draftResultsRef.current,{backgroundColor:"#F4F1EA",scale:2,useCORS:true})})
    .then(function(canvas){return saveCanvas(canvas,"nba-tl-26-draft-recap.png","NBA TL 26 Draft Recap")})
    .then(function(){setDShare("idle")}).catch(function(){setDShare("error")});
  }
@@ -958,7 +975,7 @@ function App(){
   });
  }
 
- var badge=src.error&&!src.trusted?["NO DATA","var(--accent)"]:src.error?["STALE","var(--accent)"]:(src.phase==="final"||locked)?["FINAL","var(--ink)"]:src.phase==="live"?["LIVE","var(--good)"]:src.trusted?["SAVED","var(--accent)"]:["CHECKING","var(--header-2)"];
+ var badge=src.error&&!src.trusted?["NO DATA","var(--leather)"]:src.error?["STALE","var(--leather)"]:(src.phase==="final"||locked)?["FINAL","var(--accent-fill)"]:src.phase==="live"?["LIVE","var(--live)"]:src.trusted?["SAVED","var(--leather)"]:["CHECKING","var(--leather)"];
  var sub=src.error&&!src.trusted?"ESPN didn't return the 2026-27 regular season."
   :src.error?"Last successful update "+stamp(src.at)+" · not current"
   :src.phase==="checking"&&src.trusted?"Last successful update "+stamp(src.at)+" · checking ESPN"
@@ -1004,12 +1021,12 @@ function App(){
     </div>
     <div style=${{color:ON,textAlign:"right"}}>
      <div className="fine" style=${{fontWeight:800,letterSpacing:1}}>DEFENDING CHAMP: GAINZY</div>
-     <div className="fine" style=${{marginTop:2}}>${locked?"Season final":"Est. 2024"} <span style=${{display:"inline-block",width:8,height:8,borderRadius:"50%",background:badge[0]==="LIVE"?"var(--live)":"var(--on-dark-accent)",marginLeft:6}}></span> ${badge[0]==="LIVE"?html`<span className="badge" style=${{color:"var(--live)"}}>LIVE</span>`:null}</div>
+     <div className="fine" style=${{marginTop:2}}>${locked?"Season final":"Est. 2024"} <span style=${{display:"inline-block",width:8,height:8,borderRadius:"50%",background:"var(--on-dark-accent)",marginLeft:6}}></span> ${badge[0]==="LIVE"?html`<span className="badge" style=${{color:ON}}>LIVE</span>`:null}</div>
      <div style=${{marginTop:4}}><a className="updates-link" href="#interest" onClick=${function(e){var el=document.getElementById("interest");if(!el)return;e.preventDefault();el.scrollIntoView({block:"start"})}}>Get updates</a></div>
     </div>
    </div>
    <div className="status-chip" data-counter="header" data-games=${gamesPlayed==null?"":String(gamesPlayed)} data-total="1230" data-phase=${src.phase} data-locked=${locked?"1":"0"}>
-    <span className="pill" style=${{background:badge[1],color:"var(--on-dark)"}}>${badge[0]}</span>
+    <span className="pill" style=${{background:badge[1]}}>${badge[0]}</span>
     <div className="fine" style=${{color:N,fontWeight:800,letterSpacing:1}}>${seasonLine}</div>
     <div className="fine" style=${{color:G,fontWeight:800}}>${slateLine}</div>
    </div>
@@ -1072,13 +1089,13 @@ function App(){
    </div>`:null}
 
    ${tab==="standings"?html`<div style=${{animation:"fadeIn .25s"}}>
-    <div data-counter="progress" data-games=${gamesPlayed==null?"":String(gamesPlayed)} data-total="1230" style=${{marginBottom:16,background:"#fff",borderRadius:10,padding:"16px 20px",border:"1px solid #E5E5E5"}}>
+    <div data-counter="progress" data-games=${gamesPlayed==null?"":String(gamesPlayed)} data-total="1230" style=${{marginBottom:16,background:"var(--paper)",borderRadius:10,padding:"16px 20px",border:"1px solid var(--line)"}}>
      <div style=${{display:"flex",justifyContent:"space-between",alignItems:"center",gap:8,marginBottom:10,flexWrap:"wrap"}}>
       <div className="fine" style=${{fontWeight:800,color:N,letterSpacing:1}}>SEASON PROGRESS</div>
       <div className="fine" style=${{color:GY,fontWeight:700}}>${locked?"2026-27 Season Final · ":""}${slateLine}</div>
      </div>
-     <div style=${{background:"#E5E5E5",borderRadius:20,height:12,overflow:"hidden"}}>
-      <div style=${{background:trusted?"linear-gradient(90deg,"+GR+","+G+")":"#E5E5E5",height:"100%",borderRadius:20,width:(trusted?Math.max(pct>0?1:0,pct):0)+"%",transition:"width .4s ease"}}></div>
+     <div style=${{background:"var(--line)",borderRadius:20,height:12,overflow:"hidden"}}>
+      <div style=${{background:trusted?"linear-gradient(90deg,"+GR+","+G+")":"var(--line)",height:"100%",borderRadius:20,width:(trusted?Math.max(pct>0?1:0,pct):0)+"%",transition:"width .4s ease"}}></div>
      </div>
      <div className="fine" style=${{display:"flex",justifyContent:"space-between",marginTop:6,color:GY,fontWeight:700}}>
       <span>Oct 20</span><span style=${{color:trusted?GR:GY}}>${trusted?Math.round(pct)+"%":"0%"}</span><span>Apr 11</span>
@@ -1103,14 +1120,14 @@ function App(){
     </div>
 
     <div className="card" ref=${standingsRef} data-view=${view}>
-     <div style=${{background:N,padding:"14px 16px",display:"flex",justifyContent:"space-between",alignItems:"center",gap:8,flexWrap:"wrap"}}>
-      <span style=${{color:ON,fontSize:14,fontWeight:800}}>LEAGUE STANDINGS</span>
+     <div style=${{background:"var(--bar)",padding:"14px 16px",display:"flex",justifyContent:"space-between",alignItems:"center",gap:8,flexWrap:"wrap"}}>
+      <span style=${{color:"var(--on-bar)",fontSize:14,fontWeight:800}}>LEAGUE STANDINGS</span>
       <div style=${{display:"flex",alignItems:"center",gap:8}}>
        <span className="fine" style=${{color:GA,fontWeight:700}}>${view==="pct"?"UNOFFICIAL WIN %":"TOTAL WINS"}</span>
        <button type="button" className="share-btn" onClick=${shareStandings}>${sharePhase==="working"?"SAVING…":"SHARE"}</button>
       </div>
      </div>
-     ${sharePhase==="error"?html`<div className="fine" style=${{background:"#FEF3C7",color:"#7a4e24",padding:"8px 16px",fontWeight:800}}>Couldn't build the image. Try again.</div>`:null}
+     ${sharePhase==="error"?html`<div className="fine" style=${{background:"var(--paper-2)",color:"var(--ink)",padding:"8px 16px",fontWeight:800}}>Couldn't build the image. Try again.</div>`:null}
      <div style=${{overflowX:"auto"}}>
       <table className="st" style=${{width:"100%"}}>
        <thead><tr style=${{background:LN}}>
@@ -1123,7 +1140,7 @@ function App(){
          var mvE=mv===null?"":mv>0?html`<span className="badge mu">▲${mv}</span>`:mv<0?html`<span className="badge md">▼${Math.abs(mv)}</span>`:html`<span className="badge ms">–</span>`;
          var tied=ranks.filter(function(r){return r===ranks[i]}).length>1;
          var stat=trusted?(view==="pct"?(m.s.gp?((m.s.pct*100).toFixed(1)+"%"):"—" ):String(m.s.tw)):"—";
-         return html`<tr key=${m.name||i} className=${ranks[i]===1&&m.s.tw>0?"gold-row":""} data-mgr=${m.name} data-wins=${trusted?m.s.tw:""} data-best=${trusted?m.s.bw:""} style=${{background:ranks[i]===1?LG:i%2===0?"#FAFAFA":"#fff"}}>
+         return html`<tr key=${m.name||i} className=${ranks[i]===1&&m.s.tw>0?"gold-row":""} data-mgr=${m.name} data-wins=${trusted?m.s.tw:""} data-best=${trusted?m.s.bw:""} style=${{background:ranks[i]===1?LG:i%2===0?"var(--paper-2)":"var(--paper)"}}>
           <td style=${{padding:"12px",textAlign:"center",fontWeight:800,fontSize:18,color:ranks[i]===1?G:N,fontFamily:"'Oswald','Arial Narrow',sans-serif"}}>${tied?"T"+ranks[i]:ranks[i]}</td>
           <td style=${{textAlign:"center",padding:"4px 2px"}}>${mvE}</td>
           <td style=${{padding:"12px",fontWeight:700,fontSize:15,color:N}}>
@@ -1148,10 +1165,10 @@ function App(){
 
     <div className="two" style=${{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginTop:16}}>
      <div className="card"><${Hd} r="W3+">HOT STREAKS</${Hd}><div style=${{padding:"8px 14px"}}>
-      ${!trusted?html`<div className="fine" style=${{color:GY,padding:6}}>Streaks load with the ESPN standings.</div>`:hot.length===0?html`<div className="fine" style=${{color:GY,padding:6}}>No active 3+ win streaks.</div>`:hot.slice(0,8).map(function(x){return html`<div key=${x.t} style=${{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"6px 0",borderBottom:"1px solid #F3E4CC",gap:8}}><${Tm} name=${x.t} /> <span style=${{display:"flex",gap:6,alignItems:"center"}}><span className="fine" style=${{color:mgrText(x.m),fontWeight:800}}>${x.m}</span><${Stk} v=${x.v} /></span></div>`})}
+      ${!trusted?html`<div className="fine" style=${{color:GY,padding:6}}>Streaks load with the ESPN standings.</div>`:hot.length===0?html`<div className="fine" style=${{color:GY,padding:6}}>No active 3+ win streaks.</div>`:hot.slice(0,8).map(function(x){return html`<div key=${x.t} style=${{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"6px 0",borderBottom:"1px solid var(--line)",gap:8}}><${Tm} name=${x.t} /> <span style=${{display:"flex",gap:6,alignItems:"center"}}><span className="fine" style=${{color:mgrText(x.m),fontWeight:800}}>${x.m}</span><${Stk} v=${x.v} /></span></div>`})}
      </div></div>
      <div className="card"><${Hd} r="L3+">COLD STREAKS</${Hd}><div style=${{padding:"8px 14px"}}>
-      ${!trusted?html`<div className="fine" style=${{color:GY,padding:6}}>Streaks load with the ESPN standings.</div>`:cold.length===0?html`<div className="fine" style=${{color:GY,padding:6}}>No active 3+ losing streaks.</div>`:cold.slice(0,8).map(function(x){return html`<div key=${x.t} style=${{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"6px 0",borderBottom:"1px solid #F3E4CC",gap:8}}><${Tm} name=${x.t} /> <span style=${{display:"flex",gap:6,alignItems:"center"}}><span className="fine" style=${{color:mgrText(x.m),fontWeight:800}}>${x.m}</span><${Stk} v=${x.v} /></span></div>`})}
+      ${!trusted?html`<div className="fine" style=${{color:GY,padding:6}}>Streaks load with the ESPN standings.</div>`:cold.length===0?html`<div className="fine" style=${{color:GY,padding:6}}>No active 3+ losing streaks.</div>`:cold.slice(0,8).map(function(x){return html`<div key=${x.t} style=${{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"6px 0",borderBottom:"1px solid var(--line)",gap:8}}><${Tm} name=${x.t} /> <span style=${{display:"flex",gap:6,alignItems:"center"}}><span className="fine" style=${{color:mgrText(x.m),fontWeight:800}}>${x.m}</span><${Stk} v=${x.v} /></span></div>`})}
      </div></div>
     </div>
 
@@ -1175,13 +1192,13 @@ function App(){
    ${tab==="rosters"?html`<div>
     <div className="roster-grid" style=${{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(240px, 1fr))",gap:12,marginBottom:20}}>
      ${dR.map(function(m){return html`<div key=${m.name} className="card" style=${{borderTop:"3px solid "+mgrFill(m.name)}}>
-      <div style=${{background:N,padding:"10px 14px",display:"flex",justifyContent:"space-between",alignItems:"center",gap:8}}>
-       <span style=${{display:"inline-flex",alignItems:"center",gap:8,color:ON,fontWeight:800}}><${Crest} name=${m.name} sz=${24} /> ${m.name||"—"}</span>
+      <div style=${{background:"var(--bar)",padding:"10px 14px",display:"flex",justifyContent:"space-between",alignItems:"center",gap:8}}>
+       <span style=${{display:"inline-flex",alignItems:"center",gap:8,color:"var(--on-bar)",fontWeight:800}}><${Crest} name=${m.name} sz=${24} /> ${m.name||"—"}</span>
        <span style=${{color:GA,fontWeight:800,fontSize:20,fontFamily:"'Oswald','Arial Narrow',sans-serif"}}>${trusted?m.s.tw:"—"}<span className="fine" style=${{fontWeight:700,marginLeft:2}}>W</span></span>
       </div>
       <table style=${{width:"100%"}}>
        <thead><tr style=${{background:LN}}><th className="fine" style=${{padding:"6px 12px",fontWeight:800,textAlign:"left"}}>TEAM</th><th className="fine" style=${{padding:"6px 8px",fontWeight:800,color:GR,textAlign:"center"}}>W-L</th><th className="fine" style=${{padding:"6px 8px",fontWeight:800,textAlign:"center"}}>STK</th></tr></thead>
-       <tbody>${[].concat(m.teams||[]).sort(function(a,b){return recOf(b).w-recOf(a).w}).map(function(t,ti){var r=recOf(t);return html`<tr key=${t} style=${{background:ti%2?"#fff":"#FAFAFA",borderLeft:"3px solid "+(TEAM_COLORS[t]||"transparent")}}>
+       <tbody>${[].concat(m.teams||[]).sort(function(a,b){return recOf(b).w-recOf(a).w}).map(function(t,ti){var r=recOf(t);return html`<tr key=${t} style=${{background:ti%2?"var(--paper)":"var(--paper-2)",borderLeft:"3px solid "+(TEAM_COLORS[t]||"transparent")}}>
         <td style=${{padding:"7px 12px",fontSize:13}}><${Tm} name=${t} sz=${16} /></td>
         <td style=${{textAlign:"center",fontWeight:800,color:N}}>${trusted?r.w+"-"+r.l:"—"}</td>
         <td style=${{textAlign:"center"}}><${Stk} v=${r.stk} /></td>
@@ -1203,7 +1220,7 @@ function App(){
       <table style=${{width:"100%"}}><thead><tr style=${{background:LN}}>
        ${["TEAM","W-L","OWNER"].map(function(h){return html`<th key=${h} className="fine" style=${{padding:"6px 8px",fontWeight:800,textAlign:h==="TEAM"||h==="OWNER"?"left":"center"}}>${h}</th>`})}
       </tr></thead><tbody>
-       ${[].concat(div.teams).sort(function(a,b){return recOf(b).w-recOf(a).w||recOf(a).l-recOf(b).l}).map(function(t,i){var r=recOf(t);var owner=ownerOf(t);return html`<tr key=${t} style=${{background:i%2?"#fff":"#FAFAFA"}}>
+       ${[].concat(div.teams).sort(function(a,b){return recOf(b).w-recOf(a).w||recOf(a).l-recOf(b).l}).map(function(t,i){var r=recOf(t);var owner=ownerOf(t);return html`<tr key=${t} style=${{background:i%2?"var(--paper)":"var(--paper-2)"}}>
         <td style=${{padding:"6px 8px",fontSize:13}}><${Tm} name=${t} sz=${14} /></td>
         <td style=${{textAlign:"center",fontWeight:800}}>${trusted?r.w+"-"+r.l:"—"}</td>
         <td className="fine" style=${{padding:"6px 8px",fontWeight:700,color:owner==="Undrafted"?GY:mgrText(owner)}}>${owner}</td>
@@ -1226,12 +1243,12 @@ function App(){
      ${isAdmin?html`<button type="button" className="share-btn" onClick=${startDraft}>START DRAFT</button>`:html`<div className="fine">The commissioner signs in with Google to run the draft.</div>`}
     </div>`:dlk?html`<div>
      <div ref=${draftResultsRef} className="card">
-      <${Hd} r="Snake · 7 rounds">2026-27 DRAFT RESULTS <span className="badge" style=${{background:RD,color:ON,marginLeft:8,padding:"2px 8px",borderRadius:10}}>LOCKED</span></${Hd}>
+      <${Hd} r="Snake · 7 rounds">2026-27 DRAFT RESULTS <span className="badge" style=${{background:"var(--accent-fill)",color:"var(--on-fill)",marginLeft:8,padding:"2px 8px",borderRadius:10}}>LOCKED</span></${Hd}>
       ${dor?html`<div className="draft-scroll" style=${{overflowX:"auto"}}><table style=${{width:"100%",minWidth:640}}>
        <thead><tr style=${{background:LN}}><th className="fine" style=${{padding:8,width:36}}>RD</th>
         ${dor.map(function(mIdx,pos){var nm=mg[mIdx]?mg[mIdx].name:dmg[mIdx]||"Mgr";return html`<th key=${pos} style=${{padding:"8px 10px",textAlign:"left"}}><span style=${{display:"inline-flex",alignItems:"center",gap:6}}><${Crest} name=${nm} sz=${22} /> ${nm}</span><div className="fine" style=${{color:G,fontWeight:800}}>Pick #${pos+1}</div></th>`})}
        </tr></thead>
-       <tbody>${rounds.map(function(row,rd){return html`<tr key=${rd} style=${{background:rd%2?"#fff":"#FAFAFA"}}>
+       <tbody>${rounds.map(function(row,rd){return html`<tr key=${rd} style=${{background:rd%2?"var(--paper)":"var(--paper-2)"}}>
         <td style=${{textAlign:"center",fontWeight:800,padding:8,background:LN}}>${rd+1}${rd%2?"←":"→"}</td>
         ${row.map(function(c){var r=recOf(c.t);return html`<td key=${c.m} style=${{padding:"8px 10px",fontSize:13,fontWeight:600}}>${c.t?html`<div style=${{display:"flex",justifyContent:"space-between",gap:6,alignItems:"center"}}><${Tm} name=${c.t} sz=${14} /><span className="fine" style=${{color:GY,fontWeight:800}}>${trusted?r.w+"-"+r.l:""}</span></div>`:"—"}</td>`})}
        </tr>`})}
@@ -1255,30 +1272,30 @@ function App(){
       ${shareCaption?html`<div style=${{padding:"10px 16px",textAlign:"center",fontWeight:700,fontStyle:"italic"}}>${shareCaption}</div>`:null}
      </div>
      <div style=${{marginTop:12,display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
-      <input value=${shareCaption} onChange=${function(e){setShareCaption(e.target.value)}} placeholder="Add a caption..." aria-label="Draft share caption" style=${{flex:1,minWidth:160,padding:"10px 12px",border:"1px solid #DDD",borderRadius:6}} />
+      <input value=${shareCaption} onChange=${function(e){setShareCaption(e.target.value)}} placeholder="Add a caption..." aria-label="Draft share caption" style=${{flex:1,minWidth:160,padding:"10px 12px",border:"1px solid var(--line)",borderRadius:6}} />
       <button type="button" className="share-btn" onClick=${shareDraft}>${dShare==="working"?"SAVING…":"SHARE"}</button>
      </div>
-     ${dShare==="error"?html`<div className="fine" style=${{marginTop:8,color:"#7a4e24",fontWeight:800}}>Couldn't build the image. Try again.</div>`:null}
+     ${dShare==="error"?html`<div className="fine" style=${{marginTop:8,color:"var(--ink)",fontWeight:800}}>Couldn't build the image. Try again.</div>`:null}
     </div>`:html`<div>
      <div className="draft-grid" style=${{marginBottom:12}}>
       ${dmg.map(function(name,i){return html`<div key=${i}><div className="fine" style=${{fontWeight:800,color:GY,marginBottom:3}}>MGR ${i+1}</div>
-       <input value=${name||""} aria-label=${"Manager "+(i+1)} disabled=${nlk} onChange=${function(e){setDMgr(i,e.target.value)}} style=${{width:"100%",padding:"8px 10px",border:cur===i&&dor?"2px solid "+G:"1px solid #DDD",borderRadius:6,fontWeight:700,background:nlk?"#F3F3F3":"#fff"}} />
+       <input value=${name||""} aria-label=${"Manager "+(i+1)} disabled=${nlk} onChange=${function(e){setDMgr(i,e.target.value)}} style=${{width:"100%",padding:"8px 10px",border:cur===i&&dor?"2px solid "+G:"1px solid var(--line)",borderRadius:6,fontWeight:700,background:nlk?"var(--paper-2)":"var(--paper)"}} />
       </div>`})}
      </div>
-     ${!dor?html`<div style=${{textAlign:"center",padding:24,background:"#fff",borderRadius:12,border:"1px solid #E5E5E5",marginBottom:12}}>
-      ${shuffled?html`<div style=${{display:"flex",justifyContent:"center",gap:10,flexWrap:"wrap",marginBottom:12}}>${shuffled.map(function(mIdx,pos){return html`<div key=${pos} style=${{background:N,color:ON,borderRadius:8,padding:"10px 12px",minWidth:88}}><div style=${{fontFamily:"Oswald,sans-serif",fontSize:22,color:GA}}>#${pos+1}</div><div className="fine">${dmg[mIdx]||"Mgr"}</div></div>`})}</div>`:html`<div className="fine" style=${{marginBottom:8}}>Enter all 4 names, then randomize once.</div>`}
+     ${!dor?html`<div style=${{textAlign:"center",padding:24,background:"var(--paper)",borderRadius:12,border:"1px solid var(--line)",marginBottom:12}}>
+      ${shuffled?html`<div style=${{display:"flex",justifyContent:"center",gap:10,flexWrap:"wrap",marginBottom:12}}>${shuffled.map(function(mIdx,pos){return html`<div key=${pos} style=${{background:"var(--bar)",color:"var(--on-bar)",borderRadius:8,padding:"10px 12px",minWidth:88}}><div style=${{fontFamily:"Oswald,sans-serif",fontSize:22,color:GA}}>#${pos+1}</div><div className="fine">${dmg[mIdx]||"Mgr"}</div></div>`})}</div>`:html`<div className="fine" style=${{marginBottom:8}}>Enter all 4 names, then randomize once.</div>`}
       <button type="button" className="share-btn" disabled=${!isAdmin||anim||!named} onClick=${doRandom}>${anim?"RANDOMIZING…":shuffled?"ORDER LOCKED":"RANDOMIZE DRAFT ORDER"}</button>
-     </div>`:html`<div style=${{background:N,borderRadius:8,padding:"10px 16px",marginBottom:10,display:"flex",gap:14,flexWrap:"wrap",alignItems:"center"}}>
+     </div>`:html`<div style=${{background:"var(--bar)",borderRadius:8,padding:"10px 16px",marginBottom:10,display:"flex",gap:14,flexWrap:"wrap",alignItems:"center"}}>
       <span className="fine" style=${{color:G,fontWeight:800}}>DRAFT ORDER</span>
-      ${dor.map(function(mIdx,pos){return html`<span key=${pos} style=${{color:ON,fontWeight:700}}>${pos+1}. ${dmg[mIdx]}</span>`})}
+      ${dor.map(function(mIdx,pos){return html`<span key=${pos} style=${{color:"var(--on-bar)",fontWeight:700}}>${pos+1}. ${dmg[mIdx]}</span>`})}
      </div>`}
      ${dor&&dr<7?html`<div className="fine" style=${{background:LG,borderRadius:6,padding:"8px 12px",marginBottom:10,fontWeight:800}}>Round ${dr+1} · ${dmg[cur]||"Manager"} is on the clock · Pick ${dr*4+dp+1} of 28</div>`:null}
      ${dor?html`<div className="card" style=${{marginBottom:12}}>
       <div className="draft-scroll" style=${{overflowX:"auto"}}><table style=${{width:"100%",minWidth:520}}>
-       <thead><tr style=${{background:N}}><th className="fine" style=${{color:ON,padding:8}}>RD</th>${dor.map(function(mIdx,pos){return html`<th key=${pos} className="fine" style=${{color:ON,padding:8}}>${dmg[mIdx]||"Mgr"}</th>`})}</tr></thead>
+       <thead><tr style=${{background:"var(--bar)"}}><th className="fine" style=${{color:"var(--on-bar)",padding:8}}>RD</th>${dor.map(function(mIdx,pos){return html`<th key=${pos} className="fine" style=${{color:"var(--on-bar)",padding:8}}>${dmg[mIdx]||"Mgr"}</th>`})}</tr></thead>
        <tbody>${[0,1,2,3,4,5,6].map(function(rd){return html`<tr key=${rd}>
         <td style=${{textAlign:"center",fontWeight:800,background:LN}}>${rd+1}</td>
-        ${dor.map(function(mIdx){var tp=(dpk[mIdx]||[])[rd]||"";var ic=dr===rd&&cur===mIdx&&!tp;return html`<td key=${mIdx} style=${{textAlign:"center",padding:8,background:ic?G+"33":"#fff"}}>${tp?html`<${Tm} name=${tp} sz=${14} />`:ic?"…":"—"}</td>`})}
+        ${dor.map(function(mIdx){var tp=(dpk[mIdx]||[])[rd]||"";var ic=dr===rd&&cur===mIdx&&!tp;return html`<td key=${mIdx} style=${{textAlign:"center",padding:8,background:ic?"var(--leader)":"var(--paper)"}}>${tp?html`<${Tm} name=${tp} sz=${14} />`:ic?"…":"—"}</td>`})}
        </tr>`})}
        </tbody>
       </table></div>
@@ -1286,7 +1303,7 @@ function App(){
        ${dor.map(function(mIdx,pos){var tp=(dpk[mIdx]||[])[rd]||"";return html`<div className="draft-pick" key=${mIdx}><div className="meta"><span>${dmg[mIdx]||"Mgr"}</span><span>#${rd*4+(rd%2===0?pos+1:4-pos)}</span></div><div>${tp?html`<${Tm} name=${tp} sz=${16} />`:html`<span className="fine">—</span>`}</div></div>`})}
       </div></section>`})}</div>
      </div>`:null}
-     ${dor&&dr<7&&isAdmin?html`<div><div className="fine" style=${{fontWeight:800,marginBottom:8}}>AVAILABLE (${avail.length})</div><div style=${{display:"flex",flexWrap:"wrap",gap:6}}>${avail.map(function(t){return html`<button type="button" key=${t} onClick=${function(){doPick(t)}} style=${{background:"#fff",border:"1px solid #DDD",borderRadius:6,padding:"8px 12px",minHeight:44,fontWeight:600}}><${Tm} name=${t} sz=${14} /></button>`})}</div></div>`:null}
+     ${dor&&dr<7&&isAdmin?html`<div><div className="fine" style=${{fontWeight:800,marginBottom:8}}>AVAILABLE (${avail.length})</div><div style=${{display:"flex",flexWrap:"wrap",gap:6}}>${avail.map(function(t){return html`<button type="button" key=${t} onClick=${function(){doPick(t)}} style=${{background:"var(--paper)",border:"1px solid var(--line)",borderRadius:6,padding:"8px 12px",minHeight:44,fontWeight:600}}><${Tm} name=${t} sz=${14} /></button>`})}</div></div>`:null}
      ${dr>=7?html`<div style=${{textAlign:"center",padding:16,background:LG,borderRadius:10}}><div style=${{fontWeight:800}}>Draft complete. Rosters are locked.</div><div className="fine" style=${{marginTop:6}}>Undrafted: ${undrafted.join(", ")||"None"}</div></div>`:null}
     </div>`}
    </div>`:null}
@@ -1316,7 +1333,7 @@ function App(){
       <table style=${{width:"100%"}}><thead><tr style=${{background:LN}}>
        ${["TEAM","MGR","W-L","DIFF","STK"].map(function(h){return html`<th key=${h} className="fine" style=${{padding:"6px 8px",fontWeight:800,textAlign:h==="TEAM"||h==="MGR"?"left":"center"}}>${h}</th>`})}
       </tr></thead><tbody>
-       ${g.teams.map(function(t){var own=ownerOf(t.name);var status=t.clinched?"Clinched group":g.complete?(t.rank===1?(t.tiedKeys?"Tied for the group":"Group winner"):"Did not win group"):t.outOfGroup?"Can't catch the leader":"Alive";return html`<tr key=${t.name} style=${{background:t.rank===1?LG:"#fff"}}>
+       ${g.teams.map(function(t){var own=ownerOf(t.name);var status=t.clinched?"Clinched group":g.complete?(t.rank===1?(t.tiedKeys?"Tied for the group":"Group winner"):"Did not win group"):t.outOfGroup?"Can't catch the leader":"Alive";return html`<tr key=${t.name} style=${{background:t.rank===1?LG:"var(--paper)"}}>
         <td style=${{padding:"6px 8px",fontSize:13}}><${Tm} name=${t.name} sz=${16} /><div className="badge" style=${{color:GY}}>${status}</div></td>
         <td className="fine" style=${{padding:"6px 8px",fontWeight:800,color:own==="Undrafted"?GY:mgrText(own)}}>${own==="Undrafted"?html`<span>Undrafted</span>`:html`<span style=${{display:"inline-flex",alignItems:"center",gap:4}}><${Crest} name=${own} sz=${18} /> ${own}</span>`}</td>
         <td style=${{textAlign:"center",fontWeight:800}}>${t.w}-${t.l}</td>
@@ -1331,7 +1348,7 @@ function App(){
      ${cupModel.knockout.length===0?html`<div className="fine" style=${{padding:"8px 0"}}>Knockout games are not in the ESPN feed yet.</div>`:cupModel.knockout.map(function(g){
       var names=g.teams.map(function(t){return t.name||"TBD"});
       var line=g.completed&&names[0]!=="TBD"&&names[1]!=="TBD"?names.map(function(n,i){return n+" "+g.teams[i].score}).join(" · "):names.join(" vs ");
-      return html`<div key=${g.id} style=${{padding:"8px 0",borderBottom:"1px solid #F3E4CC"}}>
+      return html`<div key=${g.id} style=${{padding:"8px 0",borderBottom:"1px solid var(--line)"}}>
        <div className="fine" style=${{fontWeight:800,color:G}}>${g.kind}</div>
        <div style=${{fontWeight:700}}>${line}</div>
        <div className="fine" style=${{color:GY}}>${g.status||""}${g.venue?" · "+g.venue:""}${g.completed?"":" · matchup not final"}</div>
@@ -1367,7 +1384,7 @@ function App(){
 
    ${tab==="rules"?html`<div style=${{animation:"fadeIn .25s"}}>
     <div className="card">
-     <div style=${{background:N,padding:"16px 24px",borderBottom:"4px solid var(--on-dark-accent)"}}><span style=${{color:ON,fontSize:16,fontWeight:800,letterSpacing:1}}>OFFICIAL RULES</span></div>
+     <div style=${{background:"var(--bar)",padding:"16px 24px",borderBottom:"4px solid var(--bar-accent)"}}><span style=${{color:"var(--on-bar)",fontSize:16,fontWeight:800,letterSpacing:1}}>OFFICIAL RULES</span></div>
      <div style=${{padding:"22px 20px"}}>
       <div style=${{fontSize:24,fontWeight:700,fontFamily:"'Oswald','Arial Narrow',sans-serif",marginBottom:14}}>WINS ARE ALL THAT MATTER</div>
       ${[
@@ -1381,10 +1398,10 @@ function App(){
       ].map(function(r){return html`<div key=${r[0]} style=${{marginBottom:14}}><div className="fine" style=${{fontWeight:800,color:G,letterSpacing:1}}>${r[0]}</div><div style=${{fontSize:14,marginTop:2,lineHeight:1.5}}>${r[1]}</div></div>`})}
      </div>
     </div>
-    <div style=${{marginTop:12,background:N,borderRadius:12,padding:"14px 20px",display:"flex",justifyContent:"space-between",alignItems:"center",gap:12,flexWrap:"wrap"}}>
+    <div style=${{marginTop:12,background:"var(--bar)",borderRadius:12,padding:"14px 20px",display:"flex",justifyContent:"space-between",alignItems:"center",gap:12,flexWrap:"wrap"}}>
      <div>
       <div className="fine" style=${{color:GA,fontWeight:800,letterSpacing:2}}>SUPPORT THE LEAGUE</div>
-      <div style=${{fontWeight:800,color:ON,marginTop:2}}>Buy the Commissioner a Coffee <span className="fine" style=${{color:ON}}>@michaelrippe</span></div>
+      <div style=${{fontWeight:800,color:"var(--on-bar)",marginTop:2}}>Buy the Commissioner a Coffee <span className="fine" style=${{color:"var(--on-bar)"}}>@michaelrippe</span></div>
      </div>
      <a href="https://venmo.com/michaelrippe?txn=pay&amount=1&note=NBA%20Team%20League%20Support" target="_blank" rel="noopener noreferrer" style=${{display:"inline-flex",alignItems:"center",gap:8,background:"#0057B8",color:"#fff",textDecoration:"none",padding:"10px 18px",borderRadius:24,fontWeight:800,minHeight:44}}> $1 via Venmo</a>
     </div>
@@ -1392,13 +1409,13 @@ function App(){
      <${Hd} r="SIGN UP FOR EARLY ACCESS">COMING SOON · MORE LEAGUES</${Hd}>
      <div style=${{padding:"16px"}}>
       <div style=${{display:"flex",gap:12,marginBottom:12,flexWrap:"wrap"}}>
-       ${[{name:"MLB",when:"Spring 2027"},{name:"NFL",when:"Fall 2027"},{name:"NHL",when:"Fall 2027"}].map(function(lg){var sel=sign.leagues.indexOf(lg.name)>=0;return html`<button type="button" key=${lg.name} onClick=${function(){toggleLeague(lg.name)}} style=${{padding:"10px 14px",borderRadius:10,border:sel?"2px solid "+G:"1px solid #E5E5E5",background:"#fff",minHeight:44}}>
+       ${[{name:"MLB",when:"Spring 2027"},{name:"NFL",when:"Fall 2027"},{name:"NHL",when:"Fall 2027"}].map(function(lg){var sel=sign.leagues.indexOf(lg.name)>=0;return html`<button type="button" key=${lg.name} onClick=${function(){toggleLeague(lg.name)}} style=${{padding:"10px 14px",borderRadius:10,border:sel?"2px solid "+G:"1px solid var(--line)",background:"var(--paper)",minHeight:44}}>
         <div style=${{fontWeight:800}}>${lg.name}</div><div className="badge" style=${{color:sel?GR:GY}}>${sel?"SELECTED":lg.when}</div>
        </button>`})}
       </div>
       ${sign.sent?html`<div className="fine" style=${{color:GR,fontWeight:800}}>You're on the list.</div>`:html`<div style=${{display:"flex",gap:8,flexWrap:"wrap"}}>
-       <input value=${sign.name} aria-label="Name" placeholder="Name" onChange=${function(e){var v=e.target.value;setSign(function(s){return Object.assign({},s,{name:v})})}} style=${{flex:1,minWidth:120,padding:"10px 12px",border:"1px solid #DDD",borderRadius:6}} />
-       <input value=${sign.email} aria-label="Email" placeholder="Email" type="email" onChange=${function(e){var v=e.target.value;setSign(function(s){return Object.assign({},s,{email:v})})}} style=${{flex:2,minWidth:160,padding:"10px 12px",border:"1px solid #DDD",borderRadius:6}} />
+       <input value=${sign.name} aria-label="Name" placeholder="Name" onChange=${function(e){var v=e.target.value;setSign(function(s){return Object.assign({},s,{name:v})})}} style=${{flex:1,minWidth:120,padding:"10px 12px",border:"1px solid var(--line)",borderRadius:6}} />
+       <input value=${sign.email} aria-label="Email" placeholder="Email" type="email" onChange=${function(e){var v=e.target.value;setSign(function(s){return Object.assign({},s,{email:v})})}} style=${{flex:2,minWidth:160,padding:"10px 12px",border:"1px solid var(--line)",borderRadius:6}} />
        <button type="button" className="share-btn" disabled=${!sign.name.trim()||!sign.email.trim()} onClick=${submitSignup}>SIGN UP</button>
       </div>`}
      </div>
